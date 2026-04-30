@@ -78,7 +78,7 @@
                     </button>
                     <div class="flex items-center gap-2 pl-4 border-l border-white/10">
                         <div class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white text-sm font-medium">S</div>
-                        <span class="text-white text-sm">shayu01</span>
+                        <span class="text-white text-sm">用户</span>
                     </div>
                 </div>
             </div>
@@ -170,21 +170,8 @@
     </main>
 
     <script>
-        // Sample product data with warehouse
-        const products = [
-            { id: 1, name: '兰蔻小黑瓶精华液 50ml', sku: 'LANCOME-001', warehouse: 'us', price: 26, retailPrice: 32, currency: '$', currencyName: 'USD', stock: 156, unit: '件', image: '💧' },
-            { id: 2, name: '雅诗兰黛小棕瓶眼霜 15ml', sku: 'ESTEE-001', warehouse: 'us', price: 22, retailPrice: 28, currency: '$', currencyName: 'USD', stock: 89, unit: '件', image: '👁️' },
-            { id: 3, name: 'Nike Air Max 270 运动鞋', sku: 'NIKE-270', warehouse: 'us', price: 35, retailPrice: 45, currency: '$', currencyName: 'USD', stock: 45, unit: '双', image: '👟' },
-            { id: 4, name: 'Apple AirPods Pro 2代', sku: 'APPLE-APP2', warehouse: 'us', price: 68, retailPrice: 89, currency: '$', currencyName: 'USD', stock: 23, unit: '个', image: '🎧' },
-            { id: 5, name: 'SK-II神仙水 230ml', sku: 'SKII-230', warehouse: 'uk', price: 55, retailPrice: 68, currency: '£', currencyName: 'GBP', stock: 67, unit: '件', image: '💎' },
-            { id: 6, name: '戴森吹风机 HD03', sku: 'DYSON-HD03', warehouse: 'uk', price: 185, retailPrice: 229, currency: '£', currencyName: 'GBP', stock: 12, unit: '台', image: '💨' },
-            { id: 7, name: 'Adidas Ultraboost 22', sku: 'ADIDAS-UB22', warehouse: 'uk', price: 35, retailPrice: 42, currency: '£', currencyName: 'GBP', stock: 34, unit: '双', image: '👟' },
-            { id: 8, name: '香奈儿5号香水 50ml', sku: 'CHANEL-5', warehouse: 'uk', price: 60, retailPrice: 75, currency: '£', currencyName: 'GBP', stock: 28, unit: '瓶', image: '🌸' },
-            { id: 9, name: '小米手环7 Pro', sku: 'XIAOMI-HB7', warehouse: 'de', price: 22, retailPrice: 28, currency: '€', currencyName: 'EUR', stock: 120, unit: '个', image: '⌚' },
-            { id: 10, name: '无印良品香薰机', sku: 'MUJI-Aroma', warehouse: 'de', price: 10, retailPrice: 12, currency: '€', currencyName: 'EUR', stock: 56, unit: '台', image: '🕯️' },
-            { id: 11, name: 'LV 经典手提包', sku: 'LV-001', warehouse: 'de', price: 380, retailPrice: 450, currency: '€', currencyName: 'EUR', stock: 5, unit: '个', image: '👜' },
-            { id: 12, name: '飞利浦电动牙刷', sku: 'PHILIPS-9330', warehouse: 'de', price: 23, retailPrice: 28, currency: '€', currencyName: 'EUR', stock: 78, unit: '支', image: '🪥' },
-        ];
+        // 商品数据（从后端API加载）
+        const products = [];
 
         const warehouseNames = { us: '🇺🇸 美国仓', uk: '🇬🇧 英国仓', de: '🇩🇪 德国仓' };
         let currentWarehouse = 'all';
@@ -342,8 +329,26 @@
             `).join('');
         });
 
+        // 页面加载时获取商品数据
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products');
+                if (response.ok) {
+                    const data = await response.json();
+                    products.length = 0;
+                    products.push(...data);
+                    renderProducts();
+                } else {
+                    renderProducts();
+                }
+            } catch (e) {
+                console.log('无法连接到后端API，将显示空列表');
+                renderProducts();
+            }
+        }
+        
         // Initial render
-        renderProducts();
+        loadProducts();
     </script>
 </body>
 </html>
