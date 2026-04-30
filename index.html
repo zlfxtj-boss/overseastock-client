@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 海外仓掌柜</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        accent: '#06b6d4',
+                        dark: '#0f0f23',
+                        darker: '#080814',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', 'Microsoft YaHei', sans-serif; }
+        body { background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #0f0f23 100%); }
+        .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+        .glow { box-shadow: 0 0 40px rgba(99,102,241,0.3); }
+        .input-glow:focus { box-shadow: 0 0 0 3px rgba(99,102,241,0.3); }
+        .floating { animation: floating 3s ease-in-out infinite; }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .gradient-text { background: linear-gradient(135deg, #6366f1, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Accessibility */
+        .skip-link { position: absolute; top: -40px; left: 0; background: var(--primary); color: white; padding: 8px 16px; z-index: 1000; transition: top 0.3s; }
+        .skip-link:focus { top: 0; }
+        .btn:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <!-- Background Effects -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl floating"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl floating" style="animation-delay: -1.5s;"></div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-md">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl mb-4 shadow-lg glow">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-white mb-1">海外仓掌柜</h1>
+            <p class="text-gray-400 text-sm">客户端采购平台</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="glass rounded-3xl p-8 glow">
+            <h2 class="text-xl font-semibold text-white mb-6 text-center">欢迎登录</h2>
+            
+            <form id="loginForm" class="space-y-5">
+                <!-- Username -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">用户名</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </span>
+                        <input type="text" name="username" placeholder="请输入用户名" required
+                            class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none input-glow transition-all">
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">密码</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </span>
+                        <input type="password" name="password" id="password" placeholder="请输入密码" required
+                            class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none input-glow transition-all">
+                        <button type="button" onclick="togglePassword()" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
+                            <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember & Forgot -->
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center text-gray-400 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 rounded border-gray-600 bg-white/5 text-primary focus:ring-primary mr-2">
+                        <span>记住我</span>
+                    </label>
+                    <a href="#" class="text-primary hover:text-secondary transition-colors">忘记密码？</a>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" id="loginBtn"
+                    class="w-full bg-gradient-to-r from-primary to-secondary text-white font-semibold py-3.5 rounded-xl hover:opacity-90 transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                    <span>登录</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Demo Account -->
+            <div class="mt-6 p-4 bg-white/5 rounded-xl border border-white/10">
+                <p class="text-xs text-gray-400 mb-2 text-center">演示账号</p>
+                <div class="flex justify-center gap-4 text-sm">
+                    <code class="bg-white/10 px-3 py-1 rounded-lg text-primary">shayu01</code>
+                    <code class="bg-white/10 px-3 py-1 rounded-lg text-primary">shayu123456</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <p class="text-center text-gray-500 text-sm mt-6">
+            © 2024 海外仓掌柜. 保留所有权利.
+        </p>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const pwd = document.getElementById('password');
+            const eye = document.getElementById('eyeIcon');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                eye.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>';
+            } else {
+                pwd.type = 'password';
+                eye.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
+            }
+        }
+
+        // Auto-fill remembered credentials
+        window.addEventListener('DOMContentLoaded', function() {
+            const rememberedUser = localStorage.getItem('rememberedUsername');
+            const rememberedPwd = localStorage.getItem('rememberedPassword');
+            const rememberChecked = localStorage.getItem('rememberChecked');
+            
+            if (rememberedUser) document.querySelector('input[name="username"]').value = rememberedUser;
+            if (rememberedPwd) document.getElementById('password').value = rememberedPwd;
+            if (rememberChecked === 'true') document.querySelector('input[type="checkbox"]').checked = true;
+        });
+
+        // Login form
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            const username = document.querySelector('input[name="username"]').value;
+            const password = document.getElementById('password').value;
+            const remember = document.querySelector('input[type="checkbox"]').checked;
+            
+            btn.innerHTML = '<svg class="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>登录中...</span>';
+            btn.disabled = true;
+            
+            // Save credentials if remember is checked
+            if (remember) {
+                localStorage.setItem('rememberedUsername', username);
+                localStorage.setItem('rememberedPassword', password);
+                localStorage.setItem('rememberChecked', 'true');
+            } else {
+                localStorage.removeItem('rememberedUsername');
+                localStorage.removeItem('rememberedPassword');
+                localStorage.setItem('rememberChecked', 'false');
+            }
+            
+            setTimeout(() => {
+                // Check if admin credentials
+                if (username === 'admin' && password === 'admin123') {
+                    window.location.href = 'admin/index.html';
+                } else {
+                    window.location.href = 'products.html';
+                }
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

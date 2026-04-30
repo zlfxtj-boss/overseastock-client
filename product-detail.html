@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情 - 海外仓掌柜</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        accent: '#06b6d4',
+                        dark: '#0f0f23',
+                        darker: '#080814',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', 'Microsoft YaHei', sans-serif; }
+        .glass { background: rgba(30,27,75,0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="bg-darker min-h-screen">
+    <!-- Header -->
+    <header class="glass sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3" onclick="location.href='products.html'" style="cursor:pointer">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-white font-semibold">海外仓掌柜</h1>
+                        <p class="text-gray-500 text-xs">客户端采购平台</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="location.href='cart.html'" class="text-gray-400 hover:text-white transition-colors relative">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <span id="cartBadge" class="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full text-xs text-white flex items-center justify-center">0</span>
+                    </button>
+                    <div class="flex items-center gap-2 pl-4 border-l border-white/10">
+                        <div class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white text-sm font-medium">S</div>
+                        <span class="text-white text-sm">shayu01</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm mb-6">
+            <a href="products.html" class="text-gray-400 hover:text-white transition-colors">商品列表</a>
+            <span class="text-gray-600">/</span>
+            <span class="text-white" id="productName">兰蔻小黑瓶精华液</span>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Product Image -->
+            <div class="glass rounded-3xl p-8">
+                <div class="aspect-square bg-gradient-to-br from-white/5 to-white/10 rounded-2xl flex items-center justify-center text-9xl" id="productImage">
+                    💧
+                </div>
+                <!-- Thumbnails -->
+                <div class="flex gap-3 mt-4">
+                    <div class="w-20 h-20 bg-primary/20 rounded-xl flex items-center justify-center text-3xl cursor-pointer border-2 border-primary" id="thumb1">💧</div>
+                    <div class="w-20 h-20 bg-white/5 rounded-xl flex items-center justify-center text-3xl cursor-pointer hover:bg-white/10 transition-colors" id="thumb2">🌸</div>
+                    <div class="w-20 h-20 bg-white/5 rounded-xl flex items-center justify-center text-3xl cursor-pointer hover:bg-white/10 transition-colors" id="thumb3">✨</div>
+                    <div class="w-20 h-20 bg-white/5 rounded-xl flex items-center justify-center text-3xl cursor-pointer hover:bg-white/10 transition-colors" id="thumb4">📦</div>
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="space-y-6">
+                <!-- Title -->
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium" id="warehouseBadge">🇺🇸 美国仓</span>
+                        <span class="text-gray-500 text-sm" id="skuLabel">SKU: LANCOME-001</span>
+                    </div>
+                    <h1 class="text-2xl font-bold text-white mb-2" id="productTitle">兰蔻小黑瓶精华液 50ml</h1>
+                    <p class="text-gray-400" id="productSubtitle">Lancôme Génifique Youth Activating Concentrate 50ml</p>
+                </div>
+
+                <!-- Price Card - 当地货币，不显示利润 -->
+                <div class="glass rounded-2xl p-6">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="text-center">
+                            <p class="text-gray-500 text-sm mb-1">采购价</p>
+                            <p class="text-2xl font-bold text-accent" id="purchasePrice">$26.00</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-500 text-sm mb-1">建议零售价</p>
+                            <p class="text-2xl font-bold text-white" id="retailPrice">¥268</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 text-sm">
+                        <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-lg" id="stockBadge">
+                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            库存充足
+                        </span>
+                        <span class="text-gray-400">当前库存: <span class="text-white font-semibold" id="stockCount">156</span> <span id="stockUnit">件</span></span>
+                    </div>
+                </div>
+
+                <!-- Specifications -->
+                <div class="glass rounded-2xl p-6">
+                    <h3 class="text-white font-semibold mb-4">商品规格</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm" id="specs">
+                        <div class="flex justify-between py-2 border-b border-white/5">
+                            <span class="text-gray-500">品牌</span>
+                            <span class="text-white">Lancôme</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-white/5">
+                            <span class="text-gray-500">产地</span>
+                            <span class="text-white">法国</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-white/5">
+                            <span class="text-gray-500">规格</span>
+                            <span class="text-white" id="specSize">50ml</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-white/5">
+                            <span class="text-gray-500">保质期</span>
+                            <span class="text-white">2026年后</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quantity -->
+                <div class="glass rounded-2xl p-6">
+                    <h3 class="text-white font-semibold mb-4">采购数量</h3>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center bg-white/5 rounded-xl">
+                            <button onclick="decreaseQty()" class="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                                </svg>
+                            </button>
+                            <input type="number" id="quantity" value="1" min="1" class="w-20 bg-transparent text-center text-white text-xl font-semibold focus:outline-none">
+                            <button onclick="increaseQty()" class="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="text-gray-500 text-sm">起订量: <span id="minOrder">1</span>件</span>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-sm">
+                        <span class="text-gray-500">小计</span>
+                        <span class="text-xl font-bold text-accent" id="subtotal">$26.00</span>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-4">
+                    <button onclick="addToCart()" class="flex-1 bg-primary hover:bg-primary/80 text-white py-4 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        加入采购单
+                    </button>
+                    <button onclick="buyNow()" class="flex-1 bg-gradient-to-r from-accent to-green-500 hover:opacity-90 text-white py-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        立即下单
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Description -->
+        <div class="mt-8 glass rounded-2xl p-6">
+            <h3 class="text-white font-semibold mb-4">商品描述</h3>
+            <div class="text-gray-400 space-y-3 text-sm leading-relaxed" id="description">
+                <p>Lancôme Génifique 小黑瓶精华液，蕴含7大益生元及酵母精粹，唤醒肌肤年轻活力。</p>
+                <p>✅ 修护肌肤屏障，提升肌肤质感</p>
+                <p>✅ 紧致毛孔，细滑肤质</p>
+                <p>✅ 焕亮肤色，延缓衰老</p>
+                <p>✅ 适合所有肤质，包括敏感肌</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 商品数据 - 使用当地货币
+        const products = [
+            { id: 1, name: '兰蔻小黑瓶精华液 50ml', sku: 'LANCOME-001', warehouse: 'us', price: 26, retailPrice: 32, currency: '$', currencyName: 'USD', stock: 156, unit: '件', image: '💧', specs: { brand: 'Lancôme', origin: '法国', size: '50ml', expiry: '2026年后' }, desc: 'Lancôme Génifique 小黑瓶精华液，蕴含7大益生元及酵母精粹，唤醒肌肤年轻活力。' },
+            { id: 2, name: '雅诗兰黛小棕瓶眼霜 15ml', sku: 'ESTEE-001', warehouse: 'us', price: 22, retailPrice: 28, currency: '$', currencyName: 'USD', stock: 89, unit: '件', image: '👁️', specs: { brand: 'Estée Lauder', origin: '美国', size: '15ml', expiry: '2025年后' }, desc: 'Advanced Night Repair 修护精华眼霜，深层修护眼周肌肤。' },
+            { id: 3, name: 'Nike Air Max 270 运动鞋', sku: 'NIKE-270', warehouse: 'us', price: 35, retailPrice: 45, currency: '$', currencyName: 'USD', stock: 45, unit: '双', image: '👟', specs: { brand: 'Nike', origin: '越南', size: '标准码', expiry: '长期有效' }, desc: 'Air Max 270 男子运动鞋，舒适透气。' },
+            { id: 4, name: 'Apple AirPods Pro 2代', sku: 'APPLE-APP2', warehouse: 'us', price: 68, retailPrice: 89, currency: '$', currencyName: 'USD', stock: 23, unit: '个', image: '🎧', specs: { brand: 'Apple', origin: '中国', size: '标准版', expiry: '长期有效' }, desc: 'AirPods Pro (第二代)，主动降噪，自适应通透模式。' },
+            { id: 5, name: 'SK-II神仙水 230ml', sku: 'SKII-230', warehouse: 'uk', price: 55, retailPrice: 68, currency: '£', currencyName: 'GBP', stock: 67, unit: '件', image: '💎', specs: { brand: 'SK-II', origin: '日本', size: '230ml', expiry: '2026年后' }, desc: 'SK-II PITERA™ 护肤精华露，肌肤焕亮秘密。' },
+            { id: 6, name: '戴森吹风机 HD03', sku: 'DYSON-HD03', warehouse: 'uk', price: 185, retailPrice: 229, currency: '£', currencyName: 'GBP', stock: 12, unit: '台', image: '💨', specs: { brand: 'Dyson', origin: '马来西亚', size: 'HD03', expiry: '长期有效' }, desc: 'Dyson Supersonic 吹风机，快速干发，智能温控。' },
+            { id: 7, name: 'Adidas Ultraboost 22', sku: 'ADIDAS-UB22', warehouse: 'uk', price: 35, retailPrice: 42, currency: '£', currencyName: 'GBP', stock: 34, unit: '双', image: '👟', specs: { brand: 'Adidas', origin: '越南', size: '标准码', expiry: '长期有效' }, desc: 'Adidas Ultraboost 22 跑步鞋，Boost中底。' },
+            { id: 8, name: '香奈儿5号香水 50ml', sku: 'CHANEL-5', warehouse: 'uk', price: 60, retailPrice: 75, currency: '£', currencyName: 'GBP', stock: 28, unit: '瓶', image: '🌸', specs: { brand: 'CHANEL', origin: '法国', size: '50ml', expiry: '2027年后' }, desc: 'CHANEL N°5 女士香水 EDP，经典永恒。' },
+            { id: 9, name: '小米手环7 Pro', sku: 'XIAOMI-HB7', warehouse: 'de', price: 22, retailPrice: 28, currency: '€', currencyName: 'EUR', stock: 120, unit: '个', image: '⌚', specs: { brand: '小米', origin: '中国', size: '标准版', expiry: '长期有效' }, desc: '小米手环 7 Pro，全彩 AMOLED 屏幕。' },
+            { id: 10, name: '无印良品香薰机', sku: 'MUJI-Aroma', warehouse: 'de', price: 10, retailPrice: 12, currency: '€', currencyName: 'EUR', stock: 56, unit: '台', image: '🕯️', specs: { brand: 'MUJI', origin: '中国', size: '标准版', expiry: '长期有效' }, desc: 'MUJI 超声波香薰机，静音设计。' },
+            { id: 11, name: 'LV 经典手提包', sku: 'LV-001', warehouse: 'de', price: 380, retailPrice: 450, currency: '€', currencyName: 'EUR', stock: 5, unit: '个', image: '👜', specs: { brand: 'Louis Vuitton', origin: '法国', size: '中号', expiry: '长期有效' }, desc: 'Louis Vuitton Neverfull 中号手袋，经典花纹。' },
+            { id: 12, name: '飞利浦电动牙刷', sku: 'PHILIPS-9330', warehouse: 'de', price: 23, retailPrice: 28, currency: '€', currencyName: 'EUR', stock: 78, unit: '支', image: '🪥', specs: { brand: 'Philips', origin: '中国', size: '标准版', expiry: '长期有效' }, desc: 'Philips Sonicare Diamond Clean Smart，智能刷牙模式。' },
+        ];
+
+        const warehouseNames = { us: '🇺🇸 美国仓', uk: '🇬🇧 英国仓', de: '🇩🇪 德国仓' };
+        const warehouseFlags = { us: '🇺🇸', uk: '🇬🇧', de: '🇩🇪' };
+
+        let quantity = 1;
+        let currentProduct = null;
+        let unitPrice = 0;
+        let currencySymbol = '$';
+
+        // 获取URL参数
+        function getProductId() {
+            const params = new URLSearchParams(window.location.search);
+            return parseInt(params.get('id')) || 1;
+        }
+
+        // 初始化页面
+        function initPage() {
+            const productId = getProductId();
+            currentProduct = products.find(p => p.id === productId) || products[0];
+            
+            unitPrice = currentProduct.price;
+            currencySymbol = currentProduct.currency;
+            
+            // 更新页面元素
+            document.getElementById('productName').textContent = currentProduct.name;
+            document.getElementById('productTitle').textContent = currentProduct.name;
+            document.getElementById('productSubtitle').textContent = currentProduct.sku;
+            document.getElementById('warehouseBadge').textContent = warehouseNames[currentProduct.warehouse];
+            document.getElementById('skuLabel').textContent = 'SKU: ' + currentProduct.sku;
+            document.getElementById('productImage').textContent = currentProduct.image;
+            document.getElementById('thumb1').textContent = currentProduct.image;
+            
+            // 价格 - 采购价和建议零售价都显示当地货币
+            document.getElementById('purchasePrice').textContent = currencySymbol + unitPrice.toFixed(2);
+            document.getElementById('retailPrice').textContent = currencySymbol + currentProduct.retailPrice.toFixed(2);
+            
+            // 库存
+            document.getElementById('stockCount').textContent = currentProduct.stock;
+            document.getElementById('stockUnit').textContent = currentProduct.unit;
+            if (currentProduct.stock > 50) {
+                document.getElementById('stockBadge').innerHTML = '<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>库存充足';
+                document.getElementById('stockBadge').className = 'px-3 py-1 bg-green-500/20 text-green-400 rounded-lg';
+            } else if (currentProduct.stock > 10) {
+                document.getElementById('stockBadge').innerHTML = '<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>库存紧张';
+                document.getElementById('stockBadge').className = 'px-3 py-1 bg-orange-500/20 text-orange-400 rounded-lg';
+            } else {
+                document.getElementById('stockBadge').innerHTML = '<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>库存不足';
+                document.getElementById('stockBadge').className = 'px-3 py-1 bg-red-500/20 text-red-400 rounded-lg';
+            }
+            
+            // 规格
+            document.getElementById('specSize').textContent = currentProduct.specs.size;
+            document.getElementById('specs').innerHTML = `
+                <div class="flex justify-between py-2 border-b border-white/5">
+                    <span class="text-gray-500">品牌</span>
+                    <span class="text-white">${currentProduct.specs.brand}</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-white/5">
+                    <span class="text-gray-500">产地</span>
+                    <span class="text-white">${currentProduct.specs.origin}</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-white/5">
+                    <span class="text-gray-500">规格</span>
+                    <span class="text-white">${currentProduct.specs.size}</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-white/5">
+                    <span class="text-gray-500">保质期</span>
+                    <span class="text-white">${currentProduct.specs.expiry}</span>
+                </div>
+            `;
+            
+            // 描述
+            document.getElementById('description').innerHTML = `
+                <p>${currentProduct.desc}</p>
+            `;
+            
+            updateSubtotal();
+            updateCartBadge();
+        }
+
+        function updateSubtotal() {
+            document.getElementById('subtotal').textContent = currencySymbol + (quantity * unitPrice).toFixed(2);
+        }
+
+        function decreaseQty() {
+            if (quantity > 1) {
+                quantity -= 1;
+                document.getElementById('quantity').value = quantity;
+                updateSubtotal();
+            }
+        }
+
+        function increaseQty() {
+            quantity += 1;
+            document.getElementById('quantity').value = quantity;
+            updateSubtotal();
+        }
+
+        document.getElementById('quantity').addEventListener('change', function(e) {
+            let val = parseInt(e.target.value);
+            if (val < 1) val = 1;
+            quantity = val;
+            updateSubtotal();
+        });
+
+        // 获取购物车
+        function getCart() {
+            const cart = localStorage.getItem('overseasCart');
+            return cart ? JSON.parse(cart) : [];
+        }
+
+        // 保存购物车
+        function saveCart(cart) {
+            localStorage.setItem('overseasCart', JSON.stringify(cart));
+        }
+
+        // 添加到购物车
+        function addToCart() {
+            const cart = getCart();
+            const existingItem = cart.find(item => item.id === currentProduct.id);
+            
+            if (existingItem) {
+                existingItem.qty += quantity;
+            } else {
+                cart.push({
+                    id: currentProduct.id,
+                    name: currentProduct.name,
+                    sku: currentProduct.sku,
+                    warehouse: currentProduct.warehouse,
+                    price: currentProduct.price,
+                    currency: currentProduct.currency,
+                    currencyName: currentProduct.currencyName,
+                    retailPriceCNY: currentProduct.retailPriceCNY,
+                    unit: currentProduct.unit,
+                    image: currentProduct.image,
+                    qty: quantity
+                });
+            }
+            
+            saveCart(cart);
+            updateCartBadge();
+            
+            // 显示提示
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-green-500/90 text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3';
+            toast.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>已加入采购单！';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        // 立即购买
+        function buyNow() {
+            const cart = getCart();
+            const existingItem = cart.find(item => item.id === currentProduct.id);
+            
+            if (existingItem) {
+                existingItem.qty += quantity;
+            } else {
+                cart.push({
+                    id: currentProduct.id,
+                    name: currentProduct.name,
+                    sku: currentProduct.sku,
+                    warehouse: currentProduct.warehouse,
+                    price: currentProduct.price,
+                    currency: currentProduct.currency,
+                    currencyName: currentProduct.currencyName,
+                    retailPriceCNY: currentProduct.retailPriceCNY,
+                    unit: currentProduct.unit,
+                    image: currentProduct.image,
+                    qty: quantity
+                });
+            }
+            
+            saveCart(cart);
+            window.location.href = 'cart.html';
+        }
+
+        // 更新购物车角标
+        function updateCartBadge() {
+            const cart = getCart();
+            const total = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartBadge').textContent = total;
+        }
+
+        initPage();
+    </script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统设置 - 海外仓掌柜</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 260px;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --sidebar-bg: #1e1b4b;
+            --bg-page: #0f0f23;
+            --bg-card: #1a1a2e;
+            --border-color: #2d2d44;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b8;
+        }
+        * { font-family: 'Inter', 'Microsoft YaHei', sans-serif; }
+        body { background: var(--bg-page); color: var(--text-primary); }
+        
+        .sidebar {
+            width: var(--sidebar-w);
+            min-height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+        .main-content { margin-left: var(--sidebar-w); min-height: 100vh; }
+        
+        .settings-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .settings-card-title {
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .settings-item:last-child { border-bottom: none; }
+        .settings-label { font-weight: 500; }
+        .settings-desc { color: var(--text-secondary); font-size: 13px; margin-top: 4px; }
+        
+        .form-switch .form-check-input {
+            width: 48px;
+            height: 24px;
+            background-color: var(--border-color);
+            border: none;
+        }
+        .form-switch .form-check-input:checked {
+            background-color: var(--primary);
+        }
+        .form-switch .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+        }
+        
+        .top-nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; }
+        }
+
+        /* Accessibility */
+        .skip-link { position: absolute; top: -40px; left: 0; background: var(--primary); color: white; padding: 8px 16px; z-index: 1000; transition: top 0.3s; }
+        .skip-link:focus { top: 0; }
+        .btn:focus-visible, .nav-link-custom:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" role="navigation" aria-label="Main navigation">
+        <div class="p-4 border-bottom border-secondary/20">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:44px;height:44px;background:linear-gradient(135deg,#6366f1,#06b6d4)">
+                    <i class="bi bi-box-seam text-white fs-5"></i>
+                </div>
+                <div>
+                    <h5 class="mb-0 text-white fw-semibold" style="font-size:16px">海外仓掌柜</h5>
+                    <small class="text-secondary">管理后台</small>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="mt-4 px-3">
+            <div class="mb-4">
+                <small class="text-secondary px-3 mb-2 d-block" style="font-size:11px;text-transform:uppercase;letter-spacing:1px">主菜单</small>
+                <a href="dashboard.html" class="nav-link-custom">
+                    <i class="bi bi-grid-1x2"></i> 仪表盘
+                </a>
+                <a href="products.html" class="nav-link-custom">
+                    <i class="bi bi-box"></i> 商品管理
+                </a>
+                <a href="orders.html" class="nav-link-custom">
+                    <i class="bi bi-receipt"></i> 订单管理
+                </a>
+                <a href="warehouse.html" class="nav-link-custom">
+                    <i class="bi bi-building"></i> 仓库管理
+                </a>
+                <a href="customers.html" class="nav-link-custom">
+                    <i class="bi bi-people"></i> 客户管理
+                </a>
+            </div>
+            
+            <div class="mb-4">
+                <small class="text-secondary px-3 mb-2 d-block" style="font-size:11px;text-transform:uppercase;letter-spacing:1px">预警中心</small>
+                <a href="stock-alert.html" class="nav-link-custom">
+                    <i class="bi bi-exclamation-triangle"></i> 滞销预警
+                </a>
+            </div>
+            
+            <div class="mb-4">
+                <small class="text-secondary px-3 mb-2 d-block" style="font-size:11px;text-transform:uppercase;letter-spacing:1px">设置</small>
+                <a href="settings.html" class="nav-link-custom active">
+                    <i class="bi bi-gear"></i> 系统设置
+                </a>
+                <a href="index.html" class="nav-link-custom text-danger">
+                    <i class="bi bi-box-arrow-right"></i> 退出登录
+                </a>
+            </div>
+        </nav>
+        
+        <style>
+            .nav-link-custom {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 16px;
+                border-radius: 10px;
+                color: var(--text-secondary);
+                text-decoration: none;
+                transition: all 0.2s;
+                margin-bottom: 4px;
+                font-size: 14px;
+            }
+            .nav-link-custom:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+            .nav-link-custom.active { background: rgba(99,102,241,0.15); color: var(--primary); }
+            .nav-link-custom i { font-size: 18px; }
+        </style>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="main-content" role="main">
+        <!-- Top Nav -->
+        <header class="top-nav" role="banner">
+            <div>
+                <h4 class="mb-0">系统设置</h4>
+                <small class="text-secondary">管理后台系统配置</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:linear-gradient(135deg,#6366f1,#06b6d4)">
+                        <span class="text-white fw-semibold">A</span>
+                    </div>
+                    <span class="text-white">管理员</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <!-- 基础设置 -->
+            <div class="settings-card">
+                <div class="settings-card-title">
+                    <i class="bi bi-sliders" style="color:var(--primary)"></i>
+                    基础设置
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">系统名称</div>
+                        <div class="settings-desc">显示在系统各处的名称</div>
+                    </div>
+                    <div style="width:250px">
+                        <input type="text" class="form-control" id="systemName" value="海外仓掌柜" style="background:var(--bg-page);color:#fff;border-color:var(--border-color)">
+                    </div>
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">默认仓库</div>
+                        <div class="settings-desc">新建商品时的默认仓库选择</div>
+                    </div>
+                    <div style="width:180px">
+                        <select class="form-select" style="background:var(--bg-page);color:#fff;border-color:var(--border-color)">
+                            <option value="us">🇺🇸 美国仓</option>
+                            <option value="uk">🇬🇧 英国仓</option>
+                            <option value="de">🇩🇪 德国仓</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">货币显示</div>
+                        <div class="settings-desc">价格显示的货币符号</div>
+                    </div>
+                    <div style="width:180px">
+                        <select class="form-select" style="background:var(--bg-page);color:#fff;border-color:var(--border-color)">
+                            <option>跟随仓库</option>
+                            <option>统一人民币</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 库存预警设置 -->
+            <div class="settings-card">
+                <div class="settings-card-title">
+                    <i class="bi bi-exclamation-triangle" style="color:var(--warning)"></i>
+                    滞销预警设置
+                    <span class="badge bg-primary ms-2" style="font-size:11px">仅管理员可见</span>
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">滞销预警阈值</div>
+                        <div class="settings-desc">商品多长时间无销售触发预警（天）</div>
+                    </div>
+                    <div style="width:120px">
+                        <input type="number" class="form-control" id="alertThreshold" value="21" min="7" max="90" style="background:var(--bg-page);color:#fff;border-color:var(--border-color)">
+                    </div>
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">严重滞销阈值</div>
+                        <div class="settings-desc">触发严重预警的阈值（天）</div>
+                    </div>
+                    <div style="width:120px">
+                        <input type="number" class="form-control" id="criticalThreshold" value="28" min="14" max="180" style="background:var(--bg-page);color:#fff;border-color:var(--border-color)">
+                    </div>
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">预警通知</div>
+                        <div class="settings-desc">启用后管理员会收到滞销预警通知</div>
+                    </div>
+                    <div class="form-switch">
+                        <input class="form-check-input" type="checkbox" checked>
+                    </div>
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">自动扫描频率</div>
+                        <div class="settings-desc">系统自动检查滞销商品的频率</div>
+                    </div>
+                    <div style="width:180px">
+                        <select class="form-select" style="background:var(--bg-page);color:#fff;border-color:var(--border-color)">
+                            <option>每天</option>
+                            <option>每周</option>
+                            <option>每月</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 通知设置 -->
+            <div class="settings-card">
+                <div class="settings-card-title">
+                    <i class="bi bi-bell" style="color:var(--success)"></i>
+                    通知设置
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">邮件通知</div>
+                        <div class="settings-desc">新订单时发送邮件通知</div>
+                    </div>
+                    <div class="form-switch">
+                        <input class="form-check-input" type="checkbox" checked>
+                    </div>
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">库存不足提醒</div>
+                        <div class="settings-desc">库存低于阈值时发送提醒</div>
+                    </div>
+                    <div class="form-switch">
+                        <input class="form-check-input" type="checkbox" checked>
+                    </div>
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">低库存阈值</div>
+                        <div class="settings-desc">触发低库存提醒的库存数量</div>
+                    </div>
+                    <div style="width:120px">
+                        <input type="number" class="form-control" value="10" min="1" style="background:var(--bg-page);color:#fff;border-color:var(--border-color)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 安全设置 -->
+            <div class="settings-card">
+                <div class="settings-card-title">
+                    <i class="bi bi-shield-lock" style="color:var(--danger)"></i>
+                    安全设置
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">修改密码</div>
+                        <div class="settings-desc">更改管理员登录密码</div>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm" onclick="showChangePasswordModal()">
+                        <i class="bi bi-key me-1"></i>修改密码
+                    </button>
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">双因素认证</div>
+                        <div class="settings-desc">登录时需要手机验证码</div>
+                    </div>
+                    <div class="form-switch">
+                        <input class="form-check-input" type="checkbox">
+                    </div>
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">登录日志</div>
+                        <div class="settings-desc">记录所有管理员登录历史</div>
+                    </div>
+                    <div class="form-switch">
+                        <input class="form-check-input" type="checkbox" checked>
+                    </div>
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">会话超时</div>
+                        <div class="settings-desc">无操作后自动退出登录（分钟）</div>
+                    </div>
+                    <div style="width:120px">
+                        <select class="form-select" style="background:var(--bg-page);color:#fff;border-color:var(--border-color)">
+                            <option>15</option>
+                            <option selected>30</option>
+                            <option>60</option>
+                            <option>120</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据管理 -->
+            <div class="settings-card">
+                <div class="settings-card-title">
+                    <i class="bi bi-database" style="color:#06b6d4"></i>
+                    数据管理
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">数据备份</div>
+                        <div class="settings-desc">手动备份系统数据</div>
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="backupData()">
+                        <i class="bi bi-download me-1"></i>立即备份
+                    </button>
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">自动备份</div>
+                        <div class="settings-desc">每天自动备份系统数据</div>
+                    </div>
+                    <div class="form-switch">
+                        <input class="form-check-input" type="checkbox" checked>
+                    </div>
+                </div>
+                
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">导出数据</div>
+                        <div class="settings-desc">导出所有业务数据为Excel</div>
+                    </div>
+                    <button class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-file-earmark-excel me-1"></i>导出数据
+                    </button>
+                </div>
+            </div>
+
+            <!-- 保存按钮 -->
+            <div class="d-flex justify-content-end gap-3 mt-4">
+                <button class="btn btn-secondary" onclick="resetSettings()">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>恢复默认
+                </button>
+                <button class="btn btn-primary" onclick="saveSettings()">
+                    <i class="bi bi-check-lg me-1"></i>保存设置
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 修改密码弹窗 -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-color)">
+                <div class="modal-header">
+                    <h5 class="modal-title text-white"><i class="bi bi-key me-2"></i>修改密码</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">当前密码</label>
+                        <input type="password" class="form-control" id="currentPassword" placeholder="请输入当前密码" style="background:var(--bg-page);color:#fff;border-color:var(--border-color)">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">新密码</label>
+                        <input type="password" class="form-control" id="newPassword" placeholder="请输入新密码" style="background:var(--bg-page);color:#fff;border-color:var(--border-color)">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">确认新密码</label>
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="请再次输入新密码" style="background:var(--bg-page);color:#fff;border-color:var(--border-color)">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmChangePassword()">确认修改</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 保存设置
+        function saveSettings() {
+            showToast('设置已保存');
+        }
+        
+        // 恢复默认
+        function resetSettings() {
+            if (confirm('确定要恢复所有设置为默认值吗？')) {
+                document.getElementById('systemName').value = '海外仓掌柜';
+                document.getElementById('alertThreshold').value = '21';
+                document.getElementById('criticalThreshold').value = '28';
+                showToast('已恢复默认设置');
+            }
+        }
+        
+        // 显示修改密码弹窗
+        function showChangePasswordModal() {
+            new bootstrap.Modal(document.getElementById('changePasswordModal')).show();
+        }
+        
+        // 确认修改密码
+        function confirmChangePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPwd = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            
+            if (!current || !newPwd || !confirm) {
+                showToast('请填写所有字段');
+                return;
+            }
+            
+            if (newPwd !== confirm) {
+                showToast('两次输入的密码不一致');
+                return;
+            }
+            
+            if (newPwd.length < 6) {
+                showToast('新密码长度不能少于6位');
+                return;
+            }
+            
+            bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
+            showToast('密码修改成功');
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+        
+        // 备份数据
+        function backupData() {
+            showToast('正在备份数据，请稍候...');
+            setTimeout(() => {
+                showToast('数据备份成功');
+            }, 2000);
+        }
+        
+        // Toast提示
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed bottom-0 end-0 p-3';
+            toast.style.zIndex = '9999';
+            toast.innerHTML = '<div class="toast show" style="background:var(--bg-card);border:1px solid var(--border-color)"><div class="toast-body text-white"><i class="bi bi-check-circle text-success me-2"></i>' + message + '</div></div>';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

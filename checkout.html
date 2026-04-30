@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>确认订单 - 海外仓掌柜</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        accent: '#06b6d4',
+                        dark: '#0f0f23',
+                        darker: '#080814',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', 'Microsoft YaHei', sans-serif; }
+        .glass { background: rgba(30,27,75,0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="bg-darker min-h-screen">
+    <!-- Header -->
+    <header class="glass sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3" onclick="location.href='cart.html'" style="cursor:pointer">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-white font-semibold">海外仓掌柜</h1>
+                        <p class="text-gray-500 text-xs">客户端采购平台</p>
+                    </div>
+                </div>
+                <div class="text-gray-400">
+                    <span class="text-white">确认订单</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Form -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Delivery Address -->
+                <div class="glass rounded-2xl p-6">
+                    <h3 class="text-white font-semibold mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        收货信息
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-2">收货人姓名</label>
+                            <input type="text" id="name" value="张老板" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-2">联系电话</label>
+                            <input type="tel" id="phone" value="13812345678" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-2">邮政编码</label>
+                            <input type="text" id="zipcode" value="510000" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-2">所在城市</label>
+                            <input type="text" id="city" value="广州市" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 transition-all">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-gray-400 text-sm mb-2">详细地址</label>
+                            <input type="text" id="address" value="广东省 广州市 天河区 天河路123号 珠江新城大厦 5楼501室" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 transition-all">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-gray-400 text-sm mb-2">备注</label>
+                            <textarea id="remark" rows="2" placeholder="如有特殊要求，请在此说明..." class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 transition-all resize-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Notes -->
+                <div class="glass rounded-2xl p-6">
+                    <h3 class="text-white font-semibold mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+                        </svg>
+                        订单备注
+                    </h3>
+                    <textarea id="orderRemark" rows="3" placeholder="如有特殊要求，请在此说明..." class="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 transition-all resize-none"></textarea>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="lg:col-span-1">
+                <div class="glass rounded-2xl p-6 sticky top-28">
+                    <h3 class="text-white font-semibold mb-4">订单摘要</h3>
+                    
+                    <!-- Items Preview -->
+                    <div class="space-y-3 mb-6 max-h-48 overflow-y-auto" id="itemsPreview">
+                        <!-- Items will be rendered here -->
+                    </div>
+
+                    <div class="border-t border-white/10 pt-4 space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">商品种类</span>
+                            <span class="text-white" id="itemTypes">0 种</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">商品总数</span>
+                            <span class="text-white" id="totalItems">0 件</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">采购总额</span>
+                            <span class="text-white" id="totalAmount">¥0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">配送费用</span>
+                            <span class="text-green-400">待确认</span>
+                        </div>
+                        <div class="border-t border-white/10 pt-2 mt-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">应付总额</span>
+                                <span class="text-xl font-bold text-accent" id="payAmount">¥0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 p-4 bg-yellow-500/10 rounded-xl border border-yellow-500/20">
+                        <p class="text-yellow-400 text-sm flex items-start gap-2">
+                            <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                            <span>提交订单后，管理员确认发货前可取消订单</span>
+                        </p>
+                    </div>
+
+                    <button onclick="submitOrder()" id="submitBtn" class="w-full mt-6 bg-gradient-to-r from-accent to-green-500 hover:opacity-90 text-white py-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        提交订单
+                    </button>
+
+                    <p class="text-center text-gray-500 text-xs mt-4">
+                        点击提交即表示同意《采购协议》
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+        <div class="glass rounded-2xl p-8 max-w-md mx-4 text-center">
+            <div class="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-2">订单提交成功！</h2>
+            <p class="text-gray-400 mb-6" id="orderNo">订单号：DH20260423001</p>
+            <p class="text-gray-500 text-sm mb-6">请等待管理员确认发货，确认后会通知您。</p>
+            <button onclick="goOrders()" class="bg-primary hover:bg-primary/80 text-white px-8 py-3 rounded-xl font-semibold transition-colors">
+                查看我的订单
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 获取购物车
+        function getCart() {
+            const cart = localStorage.getItem('overseasCart');
+            return cart ? JSON.parse(cart) : [];
+        }
+
+        // 清空购物车
+        function clearCart() {
+            localStorage.removeItem('overseasCart');
+        }
+
+        // 保存订单到历史
+        function saveOrder(order) {
+            const orders = JSON.parse(localStorage.getItem('overseasOrders') || '[]');
+            orders.unshift(order);
+            localStorage.setItem('overseasOrders', JSON.stringify(orders));
+        }
+
+        // 计算总额（多币种）
+        function calculateTotal() {
+            const cart = getCart();
+            const byCurrency = {};
+            cart.forEach(item => {
+                if (!byCurrency[item.currency]) {
+                    byCurrency[item.currency] = { name: item.currencyName, total: 0 };
+                }
+                byCurrency[item.currency].total += item.price * item.qty;
+            });
+            return Object.entries(byCurrency).map(([sym, data]) =>
+                `${sym}${data.total.toFixed(2)} ${data.name}`
+            ).join(' + ');
+        }
+
+        // 渲染订单摘要
+        function renderSummary() {
+            const cart = getCart();
+            const container = document.getElementById('itemsPreview');
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">采购单为空</p>';
+                document.getElementById('itemTypes').textContent = '0 种';
+                document.getElementById('totalItems').textContent = '0 件';
+                document.getElementById('totalAmount').textContent = '-';
+                document.getElementById('payAmount').textContent = '-';
+                return;
+            }
+
+            container.innerHTML = cart.map(item => `
+                <div class="flex items-center gap-3 text-sm">
+                    <span class="w-8 h-8 bg-white/5 rounded flex items-center justify-center text-lg">${item.image}</span>
+                    <span class="text-gray-400 flex-1 truncate">${item.name}</span>
+                    <span class="text-white">×${item.qty}</span>
+                </div>
+            `).join('');
+
+            const itemTypes = cart.length;
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            const totalAmount = calculateTotal();
+
+            document.getElementById('itemTypes').textContent = itemTypes + ' 种';
+            document.getElementById('totalItems').textContent = totalItems + ' 件';
+            document.getElementById('totalAmount').textContent = totalAmount;
+            document.getElementById('payAmount').textContent = totalAmount;
+        }
+
+        // 提交订单
+        function submitOrder() {
+            const cart = getCart();
+            if (cart.length === 0) {
+                alert('采购单是空的');
+                return;
+            }
+
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = '<svg class="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>提交中...</span>';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                // 生成订单
+                const orderNo = 'DH' + new Date().getFullYear() + 
+                    String(new Date().getMonth() + 1).padStart(2, '0') + 
+                    String(new Date().getDate()).padStart(2, '0') + 
+                    String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+                
+                // 按货币分组计算总额
+                const byCurrency = {};
+                cart.forEach(item => {
+                    if (!byCurrency[item.currency]) {
+                        byCurrency[item.currency] = { name: item.currencyName, total: 0 };
+                    }
+                    byCurrency[item.currency].total += item.price * item.qty;
+                });
+                const totalAmount = Object.entries(byCurrency).map(([sym, data]) =>
+                    `${sym}${data.total.toFixed(2)} ${data.name}`
+                ).join(' + ');
+
+                const order = {
+                    orderNo,
+                    items: getCart(),
+                    totalAmount,
+                    totalAmountRaw: cart,
+                    address: {
+                        name: document.getElementById('name').value,
+                        phone: document.getElementById('phone').value,
+                        zipcode: document.getElementById('zipcode').value,
+                        city: document.getElementById('city').value,
+                        address: document.getElementById('address').value,
+                        remark: document.getElementById('remark').value
+                    },
+                    orderRemark: document.getElementById('orderRemark').value,
+                    status: 'pending',
+                    createTime: new Date().toISOString()
+                };
+
+                saveOrder(order);
+                clearCart();
+                
+                document.getElementById('orderNo').textContent = '订单号：' + orderNo;
+                document.getElementById('successModal').classList.remove('hidden');
+            }, 2000);
+        }
+
+        // 去订单页
+        function goOrders() {
+            window.location.href = 'orders.html';
+        }
+
+        // 初始化
+        renderSummary();
+    </script>
+</body>
+</html>

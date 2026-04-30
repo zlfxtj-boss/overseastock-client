@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 海外仓掌柜</title>
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    
+    <!-- Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    
+    <style>
+        /* Dashboard-specific styles */
+        :root {
+            --sidebar-w: 260px;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --sidebar-bg: #1e1b4b;
+            --bg-page: #0f0f23;
+            --bg-card: #1a1a2e;
+            --border-color: #2d2d44;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b8;
+        }
+        
+        /* CSS Variables reuse from common styles */
+        body {
+            background: var(--bg-page);
+            color: var(--text-primary);
+            font-family: 'Inter', 'Microsoft YaHei', sans-serif;
+        }
+        
+        /* Sidebar styles */
+        .sidebar {
+            width: var(--sidebar-w);
+            min-height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+        }
+        
+        /* Stat cards */
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 8px 30px rgba(99,102,241,0.15);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        /* Data cards */
+        .data-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .data-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .data-card-body {
+            padding: 24px;
+        }
+        
+        /* Table styles */
+        .table-modern {
+            --bs-table-bg: transparent;
+            --bs-table-hover-bg: rgba(99,102,241,0.1);
+            color: var(--text-primary);
+        }
+        
+        .table-modern thead th {
+            background: rgba(99,102,241,0.1);
+            color: var(--text-secondary);
+            font-weight: 500;
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 16px;
+        }
+        
+        .table-modern tbody td {
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 16px;
+            vertical-align: middle;
+        }
+        
+        .table-modern tbody tr:hover {
+            background: rgba(99,102,241,0.05);
+            cursor: pointer;
+        }
+        
+        /* Badge styles */
+        .badge-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-pending {
+            background: rgba(245,158,11,0.2);
+            color: #f59e0b;
+        }
+        
+        .badge-processing {
+            background: rgba(59,130,246,0.2);
+            color: #3b82f6;
+        }
+        
+        .badge-shipped {
+            background: rgba(16,185,129,0.2);
+            color: #10b981;
+        }
+        
+        .badge-completed {
+            background: rgba(99,102,241,0.2);
+            color: #6366f1;
+        }
+        
+        .badge-cancelled {
+            background: rgba(239,68,68,0.2);
+            color: #ef4444;
+        }
+        
+        /* Top navigation */
+        .top-nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Warehouse tabs */
+        .warehouse-tab {
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+        }
+        
+        .warehouse-tab:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-primary);
+        }
+        
+        .warehouse-tab.active {
+            background: rgba(99,102,241,0.2);
+            color: var(--primary);
+        }
+        
+        .warehouse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        /* Button styles */
+        .btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+        
+        /* Navigation links */
+        .nav-link-custom {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        
+        .nav-link-custom:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-primary);
+        }
+        
+        .nav-link-custom.active {
+            background: rgba(99,102,241,0.15);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        /* Accessibility - focus styles */
+        .btn:focus-visible,
+        .nav-link-custom:focus-visible,
+        .warehouse-tab:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" role="navigation" aria-label="Main navigation">
+        <div class="p-4 border-bottom" style="border-color: var(--border-color)">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 d-flex align-items-center justify-content-center" 
+                     style="width:44px;height:44px;background:linear-gradient(135deg,#6366f1,#06b6d4)"
+                     role="img" 
+                     aria-label="Logo">
+                    <i class="bi bi-box-seam text-white fs-5" aria-hidden="true"></i>
+                </div>
+                <div>
+                    <h5 class="mb-0 text-white fw-semibold" style="font-size:16px">海外仓掌柜</h5>
+                    <small class="text-secondary">管理后台</small>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="mt-4 px-3" role="menu">
+            <div class="mb-4">
+                <h6 class="text-secondary px-3 mb-2" style="font-size:11px;text-transform:uppercase;letter-spacing:1px">主菜单</h6>
+                <a href="dashboard.html" class="nav-link-custom active" role="menuitem" aria-current="page">
+                    <i class="bi bi-grid-1x2" aria-hidden="true"></i> 仪表盘
+                </a>
+                <a href="products.html" class="nav-link-custom" role="menuitem">
+                    <i class="bi bi-box" aria-hidden="true"></i> 商品管理
+                </a>
+                <a href="orders.html" class="nav-link-custom" role="menuitem">
+                    <i class="bi bi-receipt" aria-hidden="true"></i> 订单管理
+                </a>
+                <a href="warehouse.html" class="nav-link-custom" role="menuitem">
+                    <i class="bi bi-building" aria-hidden="true"></i> 仓库管理
+                </a>
+                <a href="customers.html" class="nav-link-custom" role="menuitem">
+                    <i class="bi bi-people" aria-hidden="true"></i> 客户管理
+                </a>
+            </div>
+            
+            <div class="mb-4">
+                <h6 class="text-secondary px-3 mb-2" style="font-size:11px;text-transform:uppercase;letter-spacing:1px">预警中心</h6>
+                <a href="stock-alert.html" class="nav-link-custom" role="menuitem">
+                    <i class="bi bi-exclamation-triangle" aria-hidden="true"></i> 滞销预警
+                </a>
+            </div>
+            
+            <div class="mb-4">
+                <h6 class="text-secondary px-3 mb-2" style="font-size:11px;text-transform:uppercase;letter-spacing:1px">设置</h6>
+                <a href="settings.html" class="nav-link-custom" role="menuitem">
+                    <i class="bi bi-gear" aria-hidden="true"></i> 系统设置
+                </a>
+                <a href="index.html" class="nav-link-custom text-danger" role="menuitem">
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i> 退出登录
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="main-content" role="main">
+        <!-- Top Navigation -->
+        <header class="top-nav" role="banner">
+            <div>
+                <h1 class="mb-0 text-white fw-semibold" style="font-size:1.5rem">仪表盘</h1>
+                <small class="text-secondary">欢迎回来，管理员工号: admin</small>
+            </div>
+            <div class="d-flex gap-3 align-items-center">
+                <button type="button" class="btn btn-dark border-0 rounded-10 px-4 position-relative" 
+                        style="background:var(--bg-card)"
+                        aria-label="Notifications">
+                    <i class="bi bi-bell me-2" aria-hidden="true"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                          style="font-size:10px"
+                          aria-label="3 unread notifications">
+                        3
+                    </span>
+                </button>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                         style="width:36px;height:36px;background:linear-gradient(135deg,#6366f1,#06b6d4)"
+                         role="img"
+                         aria-label="User avatar">
+                        <span class="text-white fw-semibold" aria-hidden="true">A</span>
+                    </div>
+                    <span class="text-white" aria-hidden="true">管理员</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="p-4">
+            <!-- Warehouse Tabs -->
+            <nav class="d-flex gap-3 mb-4" role="tablist" aria-label="Warehouse selection">
+                <button type="button" 
+                        class="warehouse-tab active" 
+                        role="tab" 
+                        aria-selected="true"
+                        aria-controls="warehouse-content"
+                        data-warehouse="all">
+                    <span class="warehouse-dot bg-primary" aria-hidden="true"></span>
+                    <span>全部仓库</span>
+                </button>
+                <button type="button" 
+                        class="warehouse-tab" 
+                        role="tab" 
+                        aria-selected="false"
+                        data-warehouse="us">
+                    <span class="warehouse-dot" style="background:#3b82f6" aria-hidden="true"></span>
+                    <span>🇺🇸 美国仓</span>
+                </button>
+                <button type="button" 
+                        class="warehouse-tab" 
+                        role="tab" 
+                        aria-selected="false"
+                        data-warehouse="uk">
+                    <span class="warehouse-dot" style="background:#ef4444" aria-hidden="true"></span>
+                    <span>🇬🇧 英国仓</span>
+                </button>
+                <button type="button" 
+                        class="warehouse-tab" 
+                        role="tab" 
+                        aria-selected="false"
+                        data-warehouse="de">
+                    <span class="warehouse-dot" style="background:#eab308" aria-hidden="true"></span>
+                    <span>🇩🇪 德国仓</span>
+                </button>
+            </nav>
+
+            <!-- Stats Cards -->
+            <section aria-label="Statistics overview">
+                <div class="row g-4 mb-4">
+                    <article class="col-md-6 col-xl-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="stat-icon" style="background:rgba(99,102,241,0.15)" aria-hidden="true">
+                                    <span style="color:#6366f1">📦</span>
+                                </div>
+                                <span class="badge bg-success bg-opacity-10 text-success" style="font-size:11px" aria-label="Increase: 12.5%">
+                                    <i class="bi bi-arrow-up" aria-hidden="true"></i> 12.5%
+                                </span>
+                            </div>
+                            <h2 class="mb-1 text-white fw-bold" style="font-size:28px" id="statProducts" aria-live="polite">1,284</h2>
+                            <p class="mb-0 text-secondary" style="font-size:13px">商品总数</p>
+                        </div>
+                    </article>
+                    
+                    <article class="col-md-6 col-xl-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="stat-icon" style="background:rgba(16,185,129,0.15)" aria-hidden="true">
+                                    <span style="color:#10b981">🛒</span>
+                                </div>
+                                <span class="badge bg-success bg-opacity-10 text-success" style="font-size:11px" aria-label="Increase: 8.2%">
+                                    <i class="bi bi-arrow-up" aria-hidden="true"></i> 8.2%
+                                </span>
+                            </div>
+                            <h2 class="mb-1 text-white fw-bold" style="font-size:28px" id="statRevenue" aria-live="polite">¥ 0</h2>
+                            <p class="mb-0 text-secondary" style="font-size:13px">今日销售额</p>
+                        </div>
+                    </article>
+                    
+                    <article class="col-md-6 col-xl-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="stat-icon" style="background:rgba(245,158,11,0.15)" aria-hidden="true">
+                                    <span style="color:#f59e0b">📋</span>
+                                </div>
+                                <span class="badge bg-danger bg-opacity-10 text-danger" style="font-size:11px" aria-label="Decrease: 3.1%">
+                                    <i class="bi bi-arrow-down" aria-hidden="true"></i> 3.1%
+                                </span>
+                            </div>
+                            <h2 class="mb-1 text-white fw-bold" style="font-size:28px" id="statPending" aria-live="polite">0</h2>
+                            <p class="mb-0 text-secondary" style="font-size:13px">待处理订单</p>
+                        </div>
+                    </article>
+                    
+                    <article class="col-md-6 col-xl-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="stat-icon" style="background:rgba(6,182,212,0.15)" aria-hidden="true">
+                                    <span style="color:#06b6d4">👥</span>
+                                </div>
+                                <span class="badge bg-success bg-opacity-10 text-success" style="font-size:11px" aria-label="Increase: 15.8%">
+                                    <i class="bi bi-arrow-up" aria-hidden="true"></i> 15.8%
+                                </span>
+                            </div>
+                            <h2 class="mb-1 text-white fw-bold" style="font-size:28px" id="statCustomers" aria-live="polite">0</h2>
+                            <p class="mb-0 text-secondary" style="font-size:13px">客户总数</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Main Content Grid -->
+            <div class="row g-4">
+                <!-- Recent Orders -->
+                <section class="col-xl-8" aria-labelledby="recent-orders-heading">
+                    <div class="data-card">
+                        <header class="data-card-header">
+                            <h2 class="mb-0 text-white fw-semibold" id="recent-orders-heading">最近订单</h2>
+                            <a href="orders.html" class="btn btn-sm btn-primary" aria-label="View all orders">
+                                查看全部
+                            </a>
+                        </header>
+                        <div class="data-card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-modern mb-0" aria-label="Recent orders table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">订单号</th>
+                                            <th scope="col">客户</th>
+                                            <th scope="col">仓库</th>
+                                            <th scope="col">金额</th>
+                                            <th scope="col">状态</th>
+                                            <th scope="col">时间</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentOrdersBody">
+                                        <tr><td colspan="6" class="text-center text-secondary py-5">暂无订单数据</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sidebar Content -->
+                <aside class="col-xl-4">
+                    <!-- Warehouse Stock Overview -->
+                    <section class="data-card" aria-labelledby="warehouse-stock-heading">
+                        <header class="data-card-header">
+                            <h2 class="mb-0 text-white fw-semibold" id="warehouse-stock-heading">仓库库存概览</h2>
+                            <a href="warehouse.html" class="btn btn-sm btn-primary" aria-label="Manage warehouses">
+                                管理
+                            </a>
+                        </header>
+                        <div class="data-card-body">
+                            <div class="d-flex flex-column gap-3">
+                                <!-- US Warehouse -->
+                                <div class="warehouse-stock-item">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="warehouse-dot" style="background:#3b82f6" aria-hidden="true"></span>
+                                            <span class="text-white">🇺🇸 美国仓</span>
+                                        </div>
+                                        <span class="text-white fw-semibold" id="usStock" aria-live="polite">0 件</span>
+                                    </div>
+                                    <div class="progress" style="height:6px;background:rgba(255,255,255,0.1)" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="usStockBarProgress">
+                                        <div class="progress-bar" id="usStockBar" style="width:0%;background:#3b82f6"></div>
+                                    </div>
+                                    <small class="text-secondary mt-1 d-block">库存使用率 <span id="usStockPercent">0</span>%</small>
+                                </div>
+                                
+                                <!-- UK Warehouse -->
+                                <div class="warehouse-stock-item">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="warehouse-dot" style="background:#ef4444" aria-hidden="true"></span>
+                                            <span class="text-white">🇬🇧 英国仓</span>
+                                        </div>
+                                        <span class="text-white fw-semibold" id="ukStock" aria-live="polite">0 件</span>
+                                    </div>
+                                    <div class="progress" style="height:6px;background:rgba(255,255,255,0.1)" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="ukStockBarProgress">
+                                        <div class="progress-bar" id="ukStockBar" style="width:0%;background:#ef4444"></div>
+                                    </div>
+                                    <small class="text-secondary mt-1 d-block">库存使用率 <span id="ukStockPercent">0</span>%</small>
+                                </div>
+                                
+                                <!-- Germany Warehouse -->
+                                <div class="warehouse-stock-item">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="warehouse-dot" style="background:#eab308" aria-hidden="true"></span>
+                                            <span class="text-white">🇩🇪 德国仓</span>
+                                        </div>
+                                        <span class="text-white fw-semibold" id="deStock" aria-live="polite">0 件</span>
+                                    </div>
+                                    <div class="progress" style="height:6px;background:rgba(255,255,255,0.1)" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="deStockBarProgress">
+                                        <div class="progress-bar" id="deStockBar" style="width:0%;background:#eab308"></div>
+                                    </div>
+                                    <small class="text-secondary mt-1 d-block">库存使用率 <span id="deStockPercent">0</span>%</small>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Quick Actions -->
+                    <section class="data-card mt-4" aria-labelledby="quick-actions-heading">
+                        <header class="data-card-header">
+                            <h2 class="mb-0 text-white fw-semibold" id="quick-actions-heading">快捷操作</h2>
+                        </header>
+                        <div class="data-card-body">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <a href="products.html" class="btn btn-dark border-0 w-100 py-3 d-flex align-items-center justify-content-center gap-2" style="background:var(--border-color)">
+                                        <i class="bi bi-plus-circle" aria-hidden="true"></i>
+                                        <span>添加商品</span>
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-dark border-0 w-100 py-3 d-flex align-items-center justify-content-center gap-2" style="background:var(--border-color)" aria-label="Batch import products">
+                                        <i class="bi bi-file-earmark-arrow-up" aria-hidden="true"></i>
+                                        <span>批量导入</span>
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-dark border-0 w-100 py-3 d-flex align-items-center justify-content-center gap-2" style="background:var(--border-color)" aria-label="Batch shipping">
+                                        <i class="bi bi-truck" aria-hidden="true"></i>
+                                        <span>批量发货</span>
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-dark border-0 w-100 py-3 d-flex align-items-center justify-content-center gap-2" style="background:var(--border-color)" aria-label="Export data">
+                                        <i class="bi bi-file-earmark-excel" aria-hidden="true"></i>
+                                        <span>导出数据</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts - Defer for performance -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script>
+        /**
+         * Dashboard Module
+         * Optimized with best practices:
+         * - DOM caching
+         * - Event delegation
+         * - Efficient localStorage access
+         * - Semantic HTML compliance
+         */
+        (function() {
+            'use strict';
+            
+            // Cache DOM elements
+            const elements = {
+                statRevenue: document.getElementById('statRevenue'),
+                statPending: document.getElementById('statPending'),
+                statCustomers: document.getElementById('statCustomers'),
+                recentOrdersBody: document.getElementById('recentOrdersBody'),
+                usStock: document.getElementById('usStock'),
+                usStockBar: document.getElementById('usStockBar'),
+                usStockPercent: document.getElementById('usStockPercent'),
+                usStockBarProgress: document.getElementById('usStockBarProgress'),
+                ukStock: document.getElementById('ukStock'),
+                ukStockBar: document.getElementById('ukStockBar'),
+                ukStockPercent: document.getElementById('ukStockPercent'),
+                ukStockBarProgress: document.getElementById('ukStockBarProgress'),
+                deStock: document.getElementById('deStock'),
+                deStockBar: document.getElementById('deStockBar'),
+                deStockPercent: document.getElementById('deStockPercent'),
+                deStockBarProgress: document.getElementById('deStockBarProgress')
+            };
+            
+            // Mapping objects for status/warehouse display
+            const warehouseConfig = {
+                us: { text: '🇺🇸 美国仓', class: 'bg-primary' },
+                uk: { text: '🇬🇧 英国仓', class: 'bg-danger' },
+                de: { text: '🇩🇪 德国仓', class: 'bg-warning' }
+            };
+            
+            const statusConfig = {
+                pending: { text: '待处理', class: 'badge-pending' },
+                processing: { text: '处理中', class: 'badge-processing' },
+                shipped: { text: '已发货', class: 'badge-shipped' },
+                completed: { text: '已完成', class: 'badge-completed' },
+                cancelled: { text: '已取消', class: 'badge-cancelled' }
+            };
+            
+            /**
+             * Update warehouse stock display
+             */
+            function updateWarehouseStock(id, stock, barId, percentId, barProgressId) {
+                const stockEl = elements[id];
+                const barEl = elements[barId];
+                const percentEl = elements[percentId];
+                const barProgressEl = elements[barProgressId];
+                
+                const stockPercent = Math.min(Math.round(stock / 10), 100);
+                
+                stockEl.textContent = stock + ' 件';
+                barEl.style.width = stockPercent + '%';
+                percentEl.textContent = stockPercent;
+                barProgressEl.setAttribute('aria-valuenow', stockPercent);
+            }
+            
+            /**
+             * Render recent orders table
+             */
+            function renderRecentOrders(orders) {
+                if (orders.length === 0) {
+                    elements.recentOrdersBody.innerHTML = 
+                        '<tr><td colspan="6" class="text-center text-secondary py-5">暂无订单数据</td></tr>';
+                    return;
+                }
+                
+                const recentOrders = orders.slice(-5).reverse();
+                const rows = recentOrders.map(order => {
+                    const warehouse = warehouseConfig[order.warehouse] || { text: order.warehouse, class: 'bg-secondary' };
+                    const status = statusConfig[order.status] || { text: order.status, class: '' };
+                    
+                    return `
+                        <tr>
+                            <td class="text-primary fw-medium">#${order.id}</td>
+                            <td>${order.customer || '未知'}</td>
+                            <td><span class="badge ${warehouse.class}">${warehouse.text}</span></td>
+                            <td class="text-success fw-semibold">¥${(order.amount || 0).toLocaleString()}</td>
+                            <td><span class="badge-status ${status.class}">${status.text}</span></td>
+                            <td class="text-secondary">${order.date || '-'}</td>
+                        </tr>
+                    `;
+                }).join('');
+                
+                elements.recentOrdersBody.innerHTML = rows;
+            }
+            
+            /**
+             * Update dashboard statistics
+             */
+            function updateDashboard() {
+                // Batch read from localStorage
+                const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+                const customers = JSON.parse(localStorage.getItem('customers') || '[]');
+                const products = JSON.parse(localStorage.getItem('products') || '[]');
+                
+                // Calculate statistics
+                const pendingOrders = orders.filter(o => o.status === 'pending').length;
+                const totalRevenue = orders
+                    .filter(o => o.status === 'completed')
+                    .reduce((sum, o) => sum + (o.amount || 0), 0);
+                
+                // Update stat cards
+                elements.statRevenue.textContent = '¥ ' + totalRevenue.toLocaleString();
+                elements.statPending.textContent = pendingOrders;
+                elements.statCustomers.textContent = customers.length;
+                
+                // Calculate warehouse stocks
+                const usStock = products
+                    .filter(p => p.warehouse === 'us')
+                    .reduce((sum, p) => sum + (p.stock || 0), 0);
+                const ukStock = products
+                    .filter(p => p.warehouse === 'uk')
+                    .reduce((sum, p) => sum + (p.stock || 0), 0);
+                const deStock = products
+                    .filter(p => p.warehouse === 'de')
+                    .reduce((sum, p) => sum + (p.stock || 0), 0);
+                
+                // Update warehouse displays
+                updateWarehouseStock('usStock', usStock, 'usStockBar', 'usStockPercent', 'usStockBarProgress');
+                updateWarehouseStock('ukStock', ukStock, 'ukStockBar', 'ukStockPercent', 'ukStockBarProgress');
+                updateWarehouseStock('deStock', deStock, 'deStockBar', 'deStockPercent', 'deStockBarProgress');
+                
+                // Render recent orders
+                renderRecentOrders(orders);
+            }
+            
+            /**
+             * Initialize dashboard
+             */
+            function init() {
+                // Update dashboard on load
+                updateDashboard();
+                
+                // Setup warehouse tab event delegation
+                const tabContainer = document.querySelector('[role="tablist"]');
+                if (tabContainer) {
+                    tabContainer.addEventListener('click', function(e) {
+                        const tab = e.target.closest('.warehouse-tab');
+                        if (!tab) return;
+                        
+                        // Update active state
+                        tabContainer.querySelectorAll('.warehouse-tab').forEach(t => {
+                            t.classList.remove('active');
+                            t.setAttribute('aria-selected', 'false');
+                        });
+                        tab.classList.add('active');
+                        tab.setAttribute('aria-selected', 'true');
+                        
+                        // Filter logic would go here
+                        const warehouse = tab.dataset.warehouse;
+                        console.log('Selected warehouse:', warehouse);
+                    });
+                }
+            }
+            
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品列表 - 海外仓掌柜</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        accent: '#06b6d4',
+                        dark: '#0f0f23',
+                        darker: '#080814',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Inter', 'Microsoft YaHei', sans-serif; }
+        .glass { background: rgba(30,27,75,0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(99,102,241,0.2); }
+        .badge { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+
+        /* Accessibility */
+        .skip-link { position: absolute; top: -40px; left: 0; background: var(--primary); color: white; padding: 8px 16px; z-index: 1000; transition: top 0.3s; }
+        .skip-link:focus { top: 0; }
+        .btn:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    </style>
+</head>
+<body class="bg-darker min-h-screen">
+    <!-- Header -->
+    <header class="glass sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-white font-semibold">海外仓掌柜</h1>
+                        <p class="text-gray-500 text-xs">客户端采购平台</p>
+                    </div>
+                </div>
+
+                <!-- Search -->
+                <div class="flex-1 max-w-xl mx-8">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="搜索商品名称、SKU..." 
+                            class="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-11 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 transition-all">
+                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- User & Cart -->
+                <div class="flex items-center gap-4">
+                    <button onclick="location.href='orders.html'" class="text-gray-400 hover:text-white transition-colors relative">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        <span id="orderBadge" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center hidden">0</span>
+                    </button>
+                    <button onclick="location.href='cart.html'" class="text-gray-400 hover:text-white transition-colors relative">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <span id="cartBadge" class="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full text-xs text-white flex items-center justify-center">0</span>
+                    </button>
+                    <div class="flex items-center gap-2 pl-4 border-l border-white/10">
+                        <div class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white text-sm font-medium">S</div>
+                        <span class="text-white text-sm">shayu01</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content" role="main" class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex gap-8">
+                    <!-- Sidebar -->
+            <aside class="w-64 flex-shrink-0">
+                <div class="glass rounded-2xl p-6 sticky top-28">
+                    <h3 class="text-white font-semibold mb-4">仓库选择</h3>
+                    <nav class="space-y-2" id="warehouseNav">
+                        <button onclick="filterByWarehouse('all')" class="warehouse-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all bg-primary/20 text-white">
+                            <span class="w-3 h-3 bg-gradient-to-br from-primary to-accent rounded-full"></span>
+                            <span>全部仓库</span>
+                            <span class="ml-auto text-gray-400 text-sm">(68)</span>
+                        </button>
+                        <button onclick="filterByWarehouse('us')" class="warehouse-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-gray-400 hover:bg-white/5 hover:text-white">
+                            <span class="w-3 h-3 bg-blue-500 rounded-full"></span>
+                            <span>🇺🇸 美国仓</span>
+                            <span class="ml-auto text-gray-500 text-sm">(28)</span>
+                        </button>
+                        <button onclick="filterByWarehouse('uk')" class="warehouse-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-gray-400 hover:bg-white/5 hover:text-white">
+                            <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                            <span>🇬🇧 英国仓</span>
+                            <span class="ml-auto text-gray-500 text-sm">(22)</span>
+                        </button>
+                        <button onclick="filterByWarehouse('de')" class="warehouse-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-gray-400 hover:bg-white/5 hover:text-white">
+                            <span class="w-3 h-3 bg-yellow-500 rounded-full"></span>
+                            <span>🇩🇪 德国仓</span>
+                            <span class="ml-auto text-gray-500 text-sm">(18)</span>
+                        </button>
+                    </nav>
+
+                    <!-- Stock Filter -->
+                    <div class="mt-8">
+                        <h3 class="text-white font-semibold mb-4">库存状态</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 text-gray-400 cursor-pointer hover:text-white transition-colors">
+                                <input type="checkbox" checked class="w-4 h-4 rounded border-gray-600 bg-white/5 text-primary focus:ring-primary">
+                                <span>有库存</span>
+                            </label>
+                            <label class="flex items-center gap-3 text-gray-400 cursor-pointer hover:text-white transition-colors">
+                                <input type="checkbox" class="w-4 h-4 rounded border-gray-600 bg-white/5 text-primary focus:ring-primary">
+                                <span>库存紧张</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Product Grid -->
+            <div class="flex-1">
+                <!-- Sort & Results -->
+                <div class="flex items-center justify-between mb-6">
+                    <p class="text-gray-400">共 <span class="text-white font-semibold">68</span> 个商品</p>
+                    <select class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-primary/50">
+                        <option>综合排序</option>
+                        <option>价格从低到高</option>
+                        <option>价格从高到低</option>
+                        <option>库存从高到低</option>
+                    </select>
+                </div>
+
+                <!-- Products Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="productsGrid">
+                    <!-- Product cards will be rendered here by JS -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex justify-center mt-10 gap-2">
+                    <button class="w-10 h-10 rounded-xl bg-white/5 text-gray-400 hover:bg-primary/20 hover:text-white transition-all flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <button class="w-10 h-10 rounded-xl bg-primary text-white">1</button>
+                    <button class="w-10 h-10 rounded-xl bg-white/5 text-gray-400 hover:bg-primary/20 hover:text-white transition-all">2</button>
+                    <button class="w-10 h-10 rounded-xl bg-white/5 text-gray-400 hover:bg-primary/20 hover:text-white transition-all">3</button>
+                    <button class="w-10 h-10 rounded-xl bg-white/5 text-gray-400 hover:bg-primary/20 hover:text-white transition-all flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sample product data with warehouse
+        const products = [
+            { id: 1, name: '兰蔻小黑瓶精华液 50ml', sku: 'LANCOME-001', warehouse: 'us', price: 26, retailPrice: 32, currency: '$', currencyName: 'USD', stock: 156, unit: '件', image: '💧' },
+            { id: 2, name: '雅诗兰黛小棕瓶眼霜 15ml', sku: 'ESTEE-001', warehouse: 'us', price: 22, retailPrice: 28, currency: '$', currencyName: 'USD', stock: 89, unit: '件', image: '👁️' },
+            { id: 3, name: 'Nike Air Max 270 运动鞋', sku: 'NIKE-270', warehouse: 'us', price: 35, retailPrice: 45, currency: '$', currencyName: 'USD', stock: 45, unit: '双', image: '👟' },
+            { id: 4, name: 'Apple AirPods Pro 2代', sku: 'APPLE-APP2', warehouse: 'us', price: 68, retailPrice: 89, currency: '$', currencyName: 'USD', stock: 23, unit: '个', image: '🎧' },
+            { id: 5, name: 'SK-II神仙水 230ml', sku: 'SKII-230', warehouse: 'uk', price: 55, retailPrice: 68, currency: '£', currencyName: 'GBP', stock: 67, unit: '件', image: '💎' },
+            { id: 6, name: '戴森吹风机 HD03', sku: 'DYSON-HD03', warehouse: 'uk', price: 185, retailPrice: 229, currency: '£', currencyName: 'GBP', stock: 12, unit: '台', image: '💨' },
+            { id: 7, name: 'Adidas Ultraboost 22', sku: 'ADIDAS-UB22', warehouse: 'uk', price: 35, retailPrice: 42, currency: '£', currencyName: 'GBP', stock: 34, unit: '双', image: '👟' },
+            { id: 8, name: '香奈儿5号香水 50ml', sku: 'CHANEL-5', warehouse: 'uk', price: 60, retailPrice: 75, currency: '£', currencyName: 'GBP', stock: 28, unit: '瓶', image: '🌸' },
+            { id: 9, name: '小米手环7 Pro', sku: 'XIAOMI-HB7', warehouse: 'de', price: 22, retailPrice: 28, currency: '€', currencyName: 'EUR', stock: 120, unit: '个', image: '⌚' },
+            { id: 10, name: '无印良品香薰机', sku: 'MUJI-Aroma', warehouse: 'de', price: 10, retailPrice: 12, currency: '€', currencyName: 'EUR', stock: 56, unit: '台', image: '🕯️' },
+            { id: 11, name: 'LV 经典手提包', sku: 'LV-001', warehouse: 'de', price: 380, retailPrice: 450, currency: '€', currencyName: 'EUR', stock: 5, unit: '个', image: '👜' },
+            { id: 12, name: '飞利浦电动牙刷', sku: 'PHILIPS-9330', warehouse: 'de', price: 23, retailPrice: 28, currency: '€', currencyName: 'EUR', stock: 78, unit: '支', image: '🪥' },
+        ];
+
+        const warehouseNames = { us: '🇺🇸 美国仓', uk: '🇬🇧 英国仓', de: '🇩🇪 德国仓' };
+        let currentWarehouse = 'all';
+
+        function renderProducts(warehouse = 'all') {
+            const grid = document.getElementById('productsGrid');
+            const filtered = warehouse === 'all' ? products : products.filter(p => p.warehouse === warehouse);
+            
+            grid.innerHTML = filtered.map(p => `
+                <div class="glass rounded-2xl overflow-hidden card-hover transition-all duration-300 cursor-pointer" onclick="location.href='product-detail.html?id=${p.id}'">
+                    <div class="aspect-square bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-7xl">
+                        ${p.image}
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-start justify-between mb-2">
+                            <span class="text-xs text-gray-500">${p.sku}</span>
+                            <span class="px-2 py-0.5 rounded-full text-xs ${p.stock > 50 ? 'bg-green-500/20 text-green-400' : 'bg-orange-500/20 text-orange-400'}">
+                                ${p.stock > 50 ? '充足' : '紧张'}
+                            </span>
+                        </div>
+                        <h3 class="text-white font-medium mb-2 line-clamp-2">${p.name}</h3>
+                        <div class="text-xs text-gray-500 mb-2">${warehouseNames[p.warehouse]}</div>
+                        <div class="space-y-1 mb-4">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">采购价</span>
+                                <span class="text-accent font-semibold">${p.currency}${p.price}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">建议零售价</span>
+                                <span class="text-gray-300">${p.currency}${p.retailPrice}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">库存</span>
+                                <span class="text-white">${p.stock} ${p.unit}</span>
+                            </div>
+                        </div>
+                        <button onclick="event.stopPropagation(); addToCart(${p.id})" class="w-full bg-primary hover:bg-primary/80 text-white py-2.5 rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            加入采购单
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterByWarehouse(warehouse) {
+            currentWarehouse = warehouse;
+            document.querySelectorAll('.warehouse-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-primary/20', 'text-white');
+                btn.classList.add('text-gray-400');
+            });
+            event.target.closest('.warehouse-btn').classList.add('active', 'bg-primary/20', 'text-white');
+            event.target.closest('.warehouse-btn').classList.remove('text-gray-400');
+            renderProducts(warehouse);
+        }
+
+        function getCart() {
+            const cart = localStorage.getItem('overseasCart');
+            return cart ? JSON.parse(cart) : [];
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem('overseasCart', JSON.stringify(cart));
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const cart = getCart();
+            const existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    sku: product.sku,
+                    warehouse: product.warehouse,
+                    price: product.price,
+                    retailPrice: product.retailPrice,
+                    currency: product.currency,
+                    currencyName: product.currencyName,
+                    unit: product.unit,
+                    image: product.image,
+                    qty: 1
+                });
+            }
+            
+            saveCart(cart);
+            updateCartBadge();
+            
+            // 显示提示
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-green-500/90 text-white px-6 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-3';
+            toast.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>已加入采购单！';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        function updateCartBadge() {
+            const cart = getCart();
+            const total = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartBadge').textContent = total;
+        }
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            let filtered = products.filter(p => 
+                p.name.toLowerCase().includes(query) || 
+                p.sku.toLowerCase().includes(query)
+            );
+            if (currentWarehouse !== 'all') {
+                filtered = filtered.filter(p => p.warehouse === currentWarehouse);
+            }
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = filtered.map(p => `
+                <div class="glass rounded-2xl overflow-hidden card-hover transition-all duration-300 cursor-pointer" onclick="location.href='product-detail.html?id=${p.id}'">
+                    <div class="aspect-square bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-7xl">
+                        ${p.image}
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-start justify-between mb-2">
+                            <span class="text-xs text-gray-500">${p.sku}</span>
+                            <span class="px-2 py-0.5 rounded-full text-xs ${p.stock > 50 ? 'bg-green-500/20 text-green-400' : 'bg-orange-500/20 text-orange-400'}">
+                                ${p.stock > 50 ? '充足' : '紧张'}
+                            </span>
+                        </div>
+                        <h3 class="text-white font-medium mb-2 line-clamp-2">${p.name}</h3>
+                        <div class="text-xs text-gray-500 mb-2">${warehouseNames[p.warehouse]}</div>
+                        <div class="space-y-1 mb-4">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">采购价</span>
+                                <span class="text-accent font-semibold">${p.currency}${p.price}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">建议零售价</span>
+                                <span class="text-gray-300">${p.currency}${p.retailPrice}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">库存</span>
+                                <span class="text-white">${p.stock} ${p.unit}</span>
+                            </div>
+                        </div>
+                        <button onclick="event.stopPropagation(); addToCart(${p.id})" class="w-full bg-primary hover:bg-primary/80 text-white py-2.5 rounded-xl font-medium transition-colors flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            加入采购单
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        });
+
+        // Initial render
+        renderProducts();
+    </script>
+</body>
+</html>

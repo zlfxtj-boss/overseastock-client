@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>滞销预警 - 海外仓掌柜</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 260px;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --sidebar-bg: #1e1b4b;
+            --bg-page: #0f0f23;
+            --bg-card: #1a1a2e;
+            --border-color: #2d2d44;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b8;
+        }
+        * { font-family: 'Inter', 'Microsoft YaHei', sans-serif; }
+        body { background: var(--bg-page); color: var(--text-primary); }
+        
+        .sidebar {
+            width: var(--sidebar-w);
+            min-height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+        .main-content { margin-left: var(--sidebar-w); min-height: 100vh; }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+        }
+        
+        .data-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .data-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .data-card-body { padding: 24px; }
+        
+        .table-modern {
+            --bs-table-bg: transparent;
+            --bs-table-hover-bg: rgba(99,102,241,0.1);
+            color: var(--text-primary);
+        }
+        .table-modern thead th {
+            background: rgba(99,102,241,0.1);
+            color: var(--text-secondary);
+            font-weight: 500;
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 16px;
+        }
+        .table-modern tbody td {
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 16px;
+            vertical-align: middle;
+        }
+        .table-modern tbody tr:hover { background: rgba(99,102,241,0.05); }
+        
+        .btn-primary { background: var(--primary); border-color: var(--primary); }
+        .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+        
+        .alert-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .alert-danger { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .alert-warning { background: rgba(245,158,11,0.2); color: #f59e0b; }
+        .alert-success { background: rgba(16,185,129,0.2); color: #10b981; }
+        
+        .whitelist-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: rgba(99,102,241,0.2);
+            color: #6366f1;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        
+        .detail-card {
+            background: rgba(99,102,241,0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        .detail-card-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+        .detail-label { color: var(--text-secondary); font-size: 14px; }
+        .detail-value { font-weight: 500; }
+        
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; }
+        }
+
+        /* Accessibility */
+        .skip-link { position: absolute; top: -40px; left: 0; background: var(--primary); color: white; padding: 8px 16px; z-index: 1000; transition: top 0.3s; }
+        .skip-link:focus { top: 0; }
+        .btn:focus-visible, .nav-link-custom:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" role="navigation" aria-label="Main navigation">
+        <div class="p-4 border-bottom border-secondary/20">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:44px;height:44px;background:linear-gradient(135deg,#6366f1,#06b6d4)">
+                    <i class="bi bi-box-seam text-white fs-5"></i>
+                </div>
+                <div>
+                    <h5 class="mb-0 text-white fw-semibold" style="font-size:16px">海外仓掌柜</h5>
+                    <small class="text-secondary">管理后台</small>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="mt-4 px-3">
+            <div class="nav-section mb-4">
+                <small class="text-secondary px-3 text-uppercase" style="font-size:11px;font-weight:600">数据中心</small>
+                <a href="dashboard.html" class="nav-item">
+                    <i class="bi bi-speedometer2"></i>控制台
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <i class="bi bi-receipt"></i>订单管理
+                </a>
+                <a href="products.html" class="nav-item">
+                    <i class="bi bi-box-seam"></i>商品管理
+                </a>
+                <a href="customers.html" class="nav-item">
+                    <i class="bi bi-people"></i>客户管理
+                </a>
+                <a href="warehouse.html" class="nav-item">
+                    <i class="bi bi-house"></i>仓库管理
+                </a>
+            </div>
+            
+            <div class="nav-section mb-4">
+                <small class="text-secondary px-3 text-uppercase" style="font-size:11px;font-weight:600">预警中心</small>
+                <a href="stock-alert.html" class="nav-item active">
+                    <i class="bi bi-exclamation-triangle"></i>滞销预警
+                </a>
+            </div>
+            
+            <div class="nav-section mb-4">
+                <small class="text-secondary px-3 text-uppercase" style="font-size:11px;font-weight:600">设置</small>
+                <a href="settings.html" class="nav-item">
+                    <i class="bi bi-gear"></i>系统设置
+                </a>
+                <a href="index.html" class="nav-item text-danger">
+                    <i class="bi bi-box-arrow-right"></i>退出登录
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="main-content" role="main">
+        <!-- Top Nav -->
+        <header class="top-nav" role="banner">
+            <div>
+                <h4 class="mb-0">滞销库存预警</h4>
+                <small class="text-secondary">监控3周以上无销售的商品</small>
+            </div>
+            <div class="d-flex gap-3 align-items-center">
+                <select class="form-select form-select-sm" style="width:150px;background:var(--bg-card);color:#fff;border-color:var(--border-color)" id="warehouseFilter">
+                    <option value="all">全部仓库</option>
+                    <option value="us">🇺🇸 美国仓</option>
+                    <option value="uk">🇬🇧 英国仓</option>
+                    <option value="de">🇩🇪 德国仓</option>
+                </select>
+                <button class="btn btn-primary btn-sm" onclick="refreshAlert()">
+                    <i class="bi bi-arrow-clockwise me-1"></i>刷新
+                </button>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <!-- 统计卡片 -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon" style="background:rgba(239,68,68,0.2);color:#ef4444">
+                                <i class="bi bi-exclamation-diamond"></i>
+                            </div>
+                            <div>
+                                <div class="text-secondary small">严重滞销 (≥4周)</div>
+                                <div class="fs-3 fw-bold text-danger" id="criticalCount">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon" style="background:rgba(245,158,11,0.2);color:#f59e0b">
+                                <i class="bi bi-exclamation-triangle"></i>
+                            </div>
+                            <div>
+                                <div class="text-secondary small">一般滞销 (3-4周)</div>
+                                <div class="fs-3 fw-bold text-warning" id="warningCount">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon" style="background:rgba(16,185,129,0.2);color:#10b981">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <div>
+                                <div class="text-secondary small">白名单商品</div>
+                                <div class="fs-3 fw-bold text-success" id="whitelistCount">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon" style="background:rgba(99,102,241,0.2);color:#6366f1">
+                                <i class="bi bi-boxes"></i>
+                            </div>
+                            <div>
+                                <div class="text-secondary small">滞销总库存</div>
+                                <div class="fs-3 fw-bold" id="totalStock">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 白名单管理 & 滞销列表 -->
+            <div class="row g-4">
+                <!-- 白名单管理 -->
+                <div class="col-md-3">
+                    <div class="data-card" style="height:fit-content">
+                        <div class="data-card-header">
+                            <h6 class="mb-0"><i class="bi bi-shield me-2"></i>白名单管理</h6>
+                            <button class="btn btn-sm btn-outline-primary" onclick="showAddWhitelistModal()">
+                                <i class="bi bi-plus"></i> 添加
+                            </button>
+                        </div>
+                        <div class="data-card-body p-0">
+                            <div class="list-group list-group-flush" id="whitelistList">
+                                <!-- 白名单列表 -->
+                            </div>
+                            <div class="p-3 text-center text-secondary border-top" style="font-size:13px">
+                                <i class="bi bi-info-circle me-1"></i>白名单商品将不显示在预警列表中
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 滞销预警列表 -->
+                <div class="col-md-9">
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h6 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>滞销预警列表</h6>
+                            <div class="d-flex gap-2">
+                                <select class="form-select form-select-sm" style="width:130px" id="alertLevelFilter" onchange="renderAlerts()">
+                                    <option value="all">全部等级</option>
+                                    <option value="critical">严重滞销</option>
+                                    <option value="warning">一般滞销</option>
+                                </select>
+                                <button class="btn btn-sm btn-outline-success" onclick="batchAddWhitelist()">
+                                    <i class="bi bi-shield-plus me-1"></i>批量加入白名单
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-modern mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width:40px">
+                                            <input type="checkbox" class="form-check-input" id="selectAll" onchange="toggleAllAlerts(this)">
+                                        </th>
+                                        <th>商品信息</th>
+                                        <th>仓库</th>
+                                        <th>SKU</th>
+                                        <th>当前库存</th>
+                                        <th>滞销天数</th>
+                                        <th>最后销售</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="alertTableBody">
+                                    <!-- 滞销预警列表 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 添加白名单弹窗 -->
+    <div class="modal fade" id="whitelistModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-color)">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-shield-plus me-2"></i>添加白名单</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">选择商品</label>
+                        <select class="form-select" id="whitelistProduct" style="background:var(--bg-page);color:#fff;border-color:var(--border-color)">
+                            <option value="">-- 请选择商品 --</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">原因说明</label>
+                        <textarea class="form-control" id="whitelistReason" rows="2" placeholder="为什么要加入白名单？" style="background:var(--bg-page);color:#fff;border-color:var(--border-color)"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="addToWhitelist()">确认添加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 商品详情弹窗 -->
+    <div class="modal fade" id="productDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border-color)">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-box-seam me-2"></i>商品详情</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="productDetailContent">
+                    <!-- 商品详情内容 -->
+                </div>
+                <div class="modal-footer" id="productDetailFooter">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 仓库配置
+        const warehouseNames = { us: '🇺🇸 美国仓', uk: '🇬🇧 英国仓', de: '🇩🇪 德国仓' };
+        const warehouseCurrency = { us: '$', uk: '£', de: '€' };
+        const warehouseBadges = { us: 'alert-badge alert-danger', uk: 'alert-badge alert-warning', de: 'alert-badge alert-success' };
+
+        // 滞销商品数据（3周无销售）
+        let stockAlerts = [];
+        
+        // 白名单
+        let whitelist = [];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderWhitelist();
+            renderAlerts();
+            updateStats();
+            populateProductSelect();
+        });
+
+        // 渲染白名单
+        function renderWhitelist() {
+            const container = document.getElementById('whitelistList');
+            if (whitelist.length === 0) {
+                container.innerHTML = '<div class="p-3 text-center text-secondary">暂无白名单商品</div>';
+                return;
+            }
+            
+            container.innerHTML = whitelist.map(w => `
+                <div class="list-group-item d-flex justify-content-between align-items-center" style="background:transparent;border-color:var(--border-color)">
+                    <div>
+                        <div class="text-white">${w.productName}</div>
+                        <small class="text-secondary">${w.reason}</small>
+                    </div>
+                    <button class="btn btn-sm text-danger" onclick="removeWhitelist('${w.id}')" title="移除">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // 渲染滞销预警列表
+        function renderAlerts() {
+            const tbody = document.getElementById('alertTableBody');
+            const warehouse = document.getElementById('warehouseFilter').value;
+            const level = document.getElementById('alertLevelFilter').value;
+            
+            // 过滤白名单商品
+            let filtered = stockAlerts.filter(p => !whitelist.some(w => w.productId === p.id));
+            
+            // 按仓库过滤
+            if (warehouse !== 'all') {
+                filtered = filtered.filter(p => p.warehouse === warehouse);
+            }
+            
+            // 按风险等级过滤
+            if (level === 'critical') {
+                filtered = filtered.filter(p => p.daysSinceSale >= 28);
+            } else if (level === 'warning') {
+                filtered = filtered.filter(p => p.daysSinceSale >= 21 && p.daysSinceSale < 28);
+            }
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center text-secondary py-5">
+                    <i class="bi bi-check-circle fs-3 d-block mb-2"></i>
+                    暂无滞销预警商品
+                </td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = filtered.map(p => {
+                const levelClass = p.daysSinceSale >= 28 ? 'alert-danger' : 'alert-warning';
+                const levelText = p.daysSinceSale >= 28 ? '严重滞销' : '一般滞销';
+                
+                return `
+                <tr>
+                    <td><input type="checkbox" class="form-check-input alert-checkbox" data-id="${p.id}"></td>
+                    <td>
+                        <div class="fw-semibold">${p.name}</div>
+                    </td>
+                    <td><span class="${warehouseBadges[p.warehouse]}">${warehouseNames[p.warehouse]}</span></td>
+                    <td class="text-secondary">${p.sku}</td>
+                    <td class="text-warning fw-semibold">${p.stock} 件</td>
+                    <td class="text-danger fw-semibold">${p.daysSinceSale} 天</td>
+                    <td class="text-secondary">${p.lastSale}</td>
+                    <td><span class="alert-badge ${levelClass}">${levelText}</span></td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm btn-outline-info" onclick="viewProduct('${p.id}')" title="查看详情">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success" onclick="singleAddWhitelist('${p.id}')" title="加入白名单">
+                                <i class="bi bi-shield-check"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+            
+            document.getElementById('totalAlerts').textContent = filtered.length;
+        }
+        function updateStats() {
+            const filtered = stockAlerts.filter(p => !whitelist.some(w => w.productId === p.id));
+            
+            document.getElementById('criticalCount').textContent = filtered.filter(p => p.daysSinceSale >= 28).length;
+            document.getElementById('warningCount').textContent = filtered.filter(p => p.daysSinceSale >= 21 && p.daysSinceSale < 28).length;
+            document.getElementById('whitelistCount').textContent = whitelist.length;
+            document.getElementById('totalStock').textContent = filtered.reduce((sum, p) => sum + p.stock, 0);
+        }
+
+        // 显示添加白名单弹窗
+        function showAddWhitelistModal() {
+            const modal = new bootstrap.Modal(document.getElementById('whitelistModal'));
+            modal.show();
+        }
+
+        // 填充商品选择
+        function populateProductSelect() {
+            const select = document.getElementById('whitelistProduct');
+            const available = stockAlerts.filter(p => !whitelist.some(w => w.productId === p.id));
+            
+            select.innerHTML = '<option value="">-- 请选择商品 --</option>' + 
+                available.map(p => `<option value="${p.id}">${p.name} (${p.sku})</option>`).join('');
+        }
+
+        // 添加到白名单
+        function addToWhitelist() {
+            const productId = document.getElementById('whitelistProduct').value;
+            const reason = document.getElementById('whitelistReason').value;
+            
+            if (!productId) {
+                alert('请选择商品');
+                return;
+            }
+            
+            const product = stockAlerts.find(p => p.id === productId);
+            if (!product) return;
+            
+            whitelist.push({
+                id: 'WL' + Date.now(),
+                productId: productId,
+                productName: product.name,
+                reason: reason || '无说明',
+                addDate: new Date().toISOString().slice(0, 10)
+            });
+            
+            document.getElementById('whitelistReason').value = '';
+            bootstrap.Modal.getInstance(document.getElementById('whitelistModal')).hide();
+            
+            renderWhitelist();
+            renderAlerts();
+            updateStats();
+            populateProductSelect();
+            showToast(`已将「${product.name}」加入白名单`);
+        }
+
+        // 移除白名单
+        function removeWhitelist(id) {
+            if (!confirm('确定要移除此商品的白名单吗？')) return;
+            
+            whitelist = whitelist.filter(w => w.id !== id);
+            renderWhitelist();
+            renderAlerts();
+            updateStats();
+            populateProductSelect();
+            showToast('已移除白名单');
+        }
+
+        // 单个加入白名单
+        function singleAddWhitelist(productId) {
+            const product = stockAlerts.find(p => p.id === productId);
+            if (!product) return;
+            
+            if (whitelist.some(w => w.productId === productId)) {
+                showToast('该商品已在白名单中');
+                return;
+            }
+            
+            whitelist.push({
+                id: 'WL' + Date.now(),
+                productId: productId,
+                productName: product.name,
+                reason: '手动添加',
+                addDate: new Date().toISOString().slice(0, 10)
+            });
+            
+            renderWhitelist();
+            renderAlerts();
+            updateStats();
+            populateProductSelect();
+            showToast(`已将「${product.name}」加入白名单`);
+        }
+
+        // 批量加入白名单
+        function batchAddWhitelist() {
+            const checked = document.querySelectorAll('.alert-checkbox:checked');
+            if (checked.length === 0) {
+                alert('请先选择要加入白名单的商品');
+                return;
+            }
+            
+            let added = 0;
+            checked.forEach(cb => {
+                const id = cb.dataset.id;
+                if (!whitelist.some(w => w.productId === id)) {
+                    const product = stockAlerts.find(p => p.id === id);
+                    if (product) {
+                        whitelist.push({
+                            id: 'WL' + Date.now() + added,
+                            productId: id,
+                            productName: product.name,
+                            reason: '批量添加',
+                            addDate: new Date().toISOString().slice(0, 10)
+                        });
+                        added++;
+                    }
+                }
+            });
+            
+            renderWhitelist();
+            renderAlerts();
+            updateStats();
+            populateProductSelect();
+            showToast(`已添加 ${added} 个商品到白名单`);
+        }
+
+        // 全选/取消全选
+        function toggleAllAlerts(checkbox) {
+            document.querySelectorAll('.alert-checkbox').forEach(cb => cb.checked = checkbox.checked);
+        }
+
+        // 查看商品详情
+        function viewProduct(id) {
+            const product = stockAlerts.find(p => p.id === id);
+            if (!product) return;
+            
+            const levelClass = product.daysSinceSale >= 28 ? 'alert-danger' : 'alert-warning';
+            const levelText = product.daysSinceSale >= 28 ? '严重滞销' : '一般滞销';
+            
+            document.getElementById('productDetailContent').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="detail-card">
+                            <div class="detail-card-title"><i class="bi bi-box-seam me-2"></i>商品信息</div>
+                            <div class="detail-item">
+                                <span class="detail-label">商品名称</span>
+                                <span class="detail-value">${product.name}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">SKU</span>
+                                <span class="detail-value">${product.sku}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">仓库</span>
+                                <span class="detail-value">${warehouseNames[product.warehouse]}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">采购价</span>
+                                <span class="detail-value text-success">${warehouseCurrency[product.warehouse]}${product.price}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-card">
+                            <div class="detail-card-title"><i class="bi bi-exclamation-triangle me-2"></i>库存预警</div>
+                            <div class="detail-item">
+                                <span class="detail-label">当前库存</span>
+                                <span class="detail-value text-warning">${product.stock} 件</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">滞销天数</span>
+                                <span class="detail-value text-danger">${product.daysSinceSale} 天</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">最后销售</span>
+                                <span class="detail-value">${product.lastSale}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">风险等级</span>
+                                <span class="detail-value"><span class="alert-badge ${levelClass}">${levelText}</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('productDetailFooter').innerHTML = `
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-success" onclick="singleAddWhitelist('${id}'); bootstrap.Modal.getInstance(document.getElementById('productDetailModal')).hide();">
+                    <i class="bi bi-shield-plus me-1"></i>加入白名单
+                </button>
+            `;
+            
+            new bootstrap.Modal(document.getElementById('productDetailModal')).show();
+        }
+
+        // 刷新
+        function refreshAlert() {
+            renderAlerts();
+            updateStats();
+            showToast('已刷新预警数据');
+        }
+
+        // Toast提示
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed bottom-0 end-0 p-3';
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `<div class="toast show" role="alert" aria-live="polite" style="background:var(--bg-card);border:1px solid var(--border-color)"><div class="toast-body text-white"><i class="bi bi-check-circle text-success me-2"></i>${message}</div></div>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // 监听仓库筛选变化
+        document.getElementById('warehouseFilter').addEventListener('change', renderAlerts);
+    </script>
+    
+    <style>
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+        .nav-item.active { background: rgba(99,102,241,0.2); color: var(--primary); }
+        .nav-section { padding: 0 12px; }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .top-nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</body>
+</html>
