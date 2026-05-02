@@ -1,3 +1,5 @@
+// 海外仓掌柜 - 真实商品数据
+// 更新于: 2026-05-02
 const products = [
     { id: "001", name: "摇椅", sku: "001", warehouse: "美国仓", price: 380, retailPrice: 210.0, stock: 10, unit: "件", image: "📦", currency: "$", currencyName: "USD", specs: {"尺寸": "138*14*85/54*6*34", "重量": "13/27磅", "出口申报单价": 60, "进口申报单价": 60, "含木制品重量KG": 50}, description: "尺寸: 138*14*85/54*6*34; 重量: 13/27磅; 采购链接", link: "https://detail.1688.com/offer/830008174408.html?spm=a360q.7751291.0.0.3cb229a8z6g1tu&sk=common&kj_agent_plugin=zying" },
     { id: "002", name: "滚筒款2层-白架-黄木纹板", sku: "002", warehouse: "美国仓", price: 200, retailPrice: 110.0, stock: 10, unit: "件", image: "📦", currency: "$", currencyName: "USD", specs: {"尺寸": "105*65.5*7.5/41*26*3", "重量": "9.02磅", "出口申报单价": 36, "进口申报单价": 36, "含木制品重量KG": 14}, description: "尺寸: 105*65.5*7.5/41*26*3; 重量: 9.02磅; 采购链接", link: "https://detail.1688.com/offer/798693869623.html?spm=a360q.7751291.0.0.3cb229a8z6g1tu&sk=common&kj_agent_plugin=zying" },
