@@ -196,40 +196,43 @@
     </main>
 
     <script>
-        // 商品数据 - 使用当地货币
-        const products = [
-            { id: 1, name: '兰蔻小黑瓶精华液 50ml', sku: 'LANCOME-001', warehouse: 'us', price: 26, retailPrice: 32, currency: '$', currencyName: 'USD', stock: 156, unit: '件', image: '💧', specs: { brand: 'Lancôme', origin: '法国', size: '50ml', expiry: '2026年后' }, desc: 'Lancôme Génifique 小黑瓶精华液，蕴含7大益生元及酵母精粹，唤醒肌肤年轻活力。' },
-            { id: 2, name: '雅诗兰黛小棕瓶眼霜 15ml', sku: 'ESTEE-001', warehouse: 'us', price: 22, retailPrice: 28, currency: '$', currencyName: 'USD', stock: 89, unit: '件', image: '👁️', specs: { brand: 'Estée Lauder', origin: '美国', size: '15ml', expiry: '2025年后' }, desc: 'Advanced Night Repair 修护精华眼霜，深层修护眼周肌肤。' },
-            { id: 3, name: 'Nike Air Max 270 运动鞋', sku: 'NIKE-270', warehouse: 'us', price: 35, retailPrice: 45, currency: '$', currencyName: 'USD', stock: 45, unit: '双', image: '👟', specs: { brand: 'Nike', origin: '越南', size: '标准码', expiry: '长期有效' }, desc: 'Air Max 270 男子运动鞋，舒适透气。' },
-            { id: 4, name: 'Apple AirPods Pro 2代', sku: 'APPLE-APP2', warehouse: 'us', price: 68, retailPrice: 89, currency: '$', currencyName: 'USD', stock: 23, unit: '个', image: '🎧', specs: { brand: 'Apple', origin: '中国', size: '标准版', expiry: '长期有效' }, desc: 'AirPods Pro (第二代)，主动降噪，自适应通透模式。' },
-            { id: 5, name: 'SK-II神仙水 230ml', sku: 'SKII-230', warehouse: 'uk', price: 55, retailPrice: 68, currency: '£', currencyName: 'GBP', stock: 67, unit: '件', image: '💎', specs: { brand: 'SK-II', origin: '日本', size: '230ml', expiry: '2026年后' }, desc: 'SK-II PITERA™ 护肤精华露，肌肤焕亮秘密。' },
-            { id: 6, name: '戴森吹风机 HD03', sku: 'DYSON-HD03', warehouse: 'uk', price: 185, retailPrice: 229, currency: '£', currencyName: 'GBP', stock: 12, unit: '台', image: '💨', specs: { brand: 'Dyson', origin: '马来西亚', size: 'HD03', expiry: '长期有效' }, desc: 'Dyson Supersonic 吹风机，快速干发，智能温控。' },
-            { id: 7, name: 'Adidas Ultraboost 22', sku: 'ADIDAS-UB22', warehouse: 'uk', price: 35, retailPrice: 42, currency: '£', currencyName: 'GBP', stock: 34, unit: '双', image: '👟', specs: { brand: 'Adidas', origin: '越南', size: '标准码', expiry: '长期有效' }, desc: 'Adidas Ultraboost 22 跑步鞋，Boost中底。' },
-            { id: 8, name: '香奈儿5号香水 50ml', sku: 'CHANEL-5', warehouse: 'uk', price: 60, retailPrice: 75, currency: '£', currencyName: 'GBP', stock: 28, unit: '瓶', image: '🌸', specs: { brand: 'CHANEL', origin: '法国', size: '50ml', expiry: '2027年后' }, desc: 'CHANEL N°5 女士香水 EDP，经典永恒。' },
-            { id: 9, name: '小米手环7 Pro', sku: 'XIAOMI-HB7', warehouse: 'de', price: 22, retailPrice: 28, currency: '€', currencyName: 'EUR', stock: 120, unit: '个', image: '⌚', specs: { brand: '小米', origin: '中国', size: '标准版', expiry: '长期有效' }, desc: '小米手环 7 Pro，全彩 AMOLED 屏幕。' },
-            { id: 10, name: '无印良品香薰机', sku: 'MUJI-Aroma', warehouse: 'de', price: 10, retailPrice: 12, currency: '€', currencyName: 'EUR', stock: 56, unit: '台', image: '🕯️', specs: { brand: 'MUJI', origin: '中国', size: '标准版', expiry: '长期有效' }, desc: 'MUJI 超声波香薰机，静音设计。' },
-            { id: 11, name: 'LV 经典手提包', sku: 'LV-001', warehouse: 'de', price: 380, retailPrice: 450, currency: '€', currencyName: 'EUR', stock: 5, unit: '个', image: '👜', specs: { brand: 'Louis Vuitton', origin: '法国', size: '中号', expiry: '长期有效' }, desc: 'Louis Vuitton Neverfull 中号手袋，经典花纹。' },
-            { id: 12, name: '飞利浦电动牙刷', sku: 'PHILIPS-9330', warehouse: 'de', price: 23, retailPrice: 28, currency: '€', currencyName: 'EUR', stock: 78, unit: '支', image: '🪥', specs: { brand: 'Philips', origin: '中国', size: '标准版', expiry: '长期有效' }, desc: 'Philips Sonicare Diamond Clean Smart，智能刷牙模式。' },
-        ];
-
         const warehouseNames = { us: '🇺🇸 美国仓', uk: '🇬🇧 英国仓', de: '🇩🇪 德国仓' };
         const warehouseFlags = { us: '🇺🇸', uk: '🇬🇧', de: '🇩🇪' };
 
-        let quantity = 1;
+        // 商品数据从API加载
+        let products = [];
         let currentProduct = null;
         let unitPrice = 0;
         let currencySymbol = '$';
 
+        // 从API加载商品数据
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products');
+                if (response.ok) {
+                    products = await response.json();
+                }
+            } catch (e) {
+                console.log('无法从API加载商品数据');
+            }
+        }
+
         // 获取URL参数
         function getProductId() {
             const params = new URLSearchParams(window.location.search);
-            return parseInt(params.get('id')) || 1;
+            return parseInt(params.get('id')) || 0;
         }
 
         // 初始化页面
-        function initPage() {
+        async function initPage() {
+            await loadProducts();
             const productId = getProductId();
-            currentProduct = products.find(p => p.id === productId) || products[0];
+            currentProduct = products.find(p => p.id === productId);
+            
+            if (!currentProduct) {
+                document.getElementById('productName').textContent = '商品不存在';
+                return;
+            }
             
             unitPrice = currentProduct.price;
             currencySymbol = currentProduct.currency;
@@ -238,22 +241,23 @@
             document.getElementById('productName').textContent = currentProduct.name;
             document.getElementById('productTitle').textContent = currentProduct.name;
             document.getElementById('productSubtitle').textContent = currentProduct.sku;
-            document.getElementById('warehouseBadge').textContent = warehouseNames[currentProduct.warehouse];
+            document.getElementById('warehouseBadge').textContent = warehouseNames[currentProduct.warehouse] || currentProduct.warehouse;
             document.getElementById('skuLabel').textContent = 'SKU: ' + currentProduct.sku;
-            document.getElementById('productImage').textContent = currentProduct.image;
-            document.getElementById('thumb1').textContent = currentProduct.image;
+            document.getElementById('productImage').textContent = currentProduct.image || '📦';
+            document.getElementById('thumb1').textContent = currentProduct.image || '📦';
             
             // 价格 - 采购价和建议零售价都显示当地货币
             document.getElementById('purchasePrice').textContent = currencySymbol + unitPrice.toFixed(2);
-            document.getElementById('retailPrice').textContent = currencySymbol + currentProduct.retailPrice.toFixed(2);
+            document.getElementById('retailPrice').textContent = currencySymbol + currentProduct.retail_price.toFixed(2);
             
             // 库存
-            document.getElementById('stockCount').textContent = currentProduct.stock;
-            document.getElementById('stockUnit').textContent = currentProduct.unit;
-            if (currentProduct.stock > 50) {
+            const stock = currentProduct.stock || 0;
+            document.getElementById('stockCount').textContent = stock;
+            document.getElementById('stockUnit').textContent = currentProduct.unit || '件';
+            if (stock > 50) {
                 document.getElementById('stockBadge').innerHTML = '<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>库存充足';
                 document.getElementById('stockBadge').className = 'px-3 py-1 bg-green-500/20 text-green-400 rounded-lg';
-            } else if (currentProduct.stock > 10) {
+            } else if (stock > 10) {
                 document.getElementById('stockBadge').innerHTML = '<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>库存紧张';
                 document.getElementById('stockBadge').className = 'px-3 py-1 bg-orange-500/20 text-orange-400 rounded-lg';
             } else {
@@ -262,29 +266,30 @@
             }
             
             // 规格
-            document.getElementById('specSize').textContent = currentProduct.specs.size;
+            const specs = currentProduct.specs || {};
+            document.getElementById('specSize').textContent = specs.size || '-';
             document.getElementById('specs').innerHTML = `
                 <div class="flex justify-between py-2 border-b border-white/5">
                     <span class="text-gray-500">品牌</span>
-                    <span class="text-white">${currentProduct.specs.brand}</span>
+                    <span class="text-white">${specs.brand || '-'}</span>
                 </div>
                 <div class="flex justify-between py-2 border-b border-white/5">
                     <span class="text-gray-500">产地</span>
-                    <span class="text-white">${currentProduct.specs.origin}</span>
+                    <span class="text-white">${specs.origin || '-'}</span>
                 </div>
                 <div class="flex justify-between py-2 border-b border-white/5">
                     <span class="text-gray-500">规格</span>
-                    <span class="text-white">${currentProduct.specs.size}</span>
+                    <span class="text-white">${specs.size || '-'}</span>
                 </div>
                 <div class="flex justify-between py-2 border-b border-white/5">
                     <span class="text-gray-500">保质期</span>
-                    <span class="text-white">${currentProduct.specs.expiry}</span>
+                    <span class="text-white">${specs.expiry || '-'}</span>
                 </div>
             `;
             
             // 描述
             document.getElementById('description').innerHTML = `
-                <p>${currentProduct.desc}</p>
+                <p>${currentProduct.description || ''}</p>
             `;
             
             updateSubtotal();
