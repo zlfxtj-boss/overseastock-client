@@ -63,7 +63,7 @@
         <nav class="flex items-center gap-2 text-sm mb-6">
             <a href="products.html" class="text-gray-400 hover:text-white transition-colors">商品列表</a>
             <span class="text-gray-600">/</span>
-            <span class="text-white" id="productName">兰蔻小黑瓶精华液</span>
+            <span class="text-white" id="productName">加载中...</span>
         </nav>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -86,11 +86,11 @@
                 <!-- Title -->
                 <div>
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium" id="warehouseBadge">🇺🇸 美国仓</span>
-                        <span class="text-gray-500 text-sm" id="skuLabel">SKU: LANCOME-001</span>
+                        <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium" id="warehouseBadge">加载中</span>
+                        <span class="text-gray-500 text-sm" id="skuLabel">SKU: -</span>
                     </div>
-                    <h1 class="text-2xl font-bold text-white mb-2" id="productTitle">兰蔻小黑瓶精华液 50ml</h1>
-                    <p class="text-gray-400" id="productSubtitle">Lancôme Génifique Youth Activating Concentrate 50ml</p>
+                    <h1 class="text-2xl font-bold text-white mb-2" id="productTitle">加载中...</h1>
+                    <p class="text-gray-400" id="productSubtitle">-</p>
                 </div>
 
                 <!-- Price Card - 当地货币，不显示利润 -->
@@ -98,11 +98,11 @@
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div class="text-center">
                             <p class="text-gray-500 text-sm mb-1">采购价</p>
-                            <p class="text-2xl font-bold text-accent" id="purchasePrice">$26.00</p>
+                            <p class="text-2xl font-bold text-accent" id="purchasePrice">-</p>
                         </div>
                         <div class="text-center">
                             <p class="text-gray-500 text-sm mb-1">建议零售价</p>
-                            <p class="text-2xl font-bold text-white" id="retailPrice">¥268</p>
+                            <p class="text-2xl font-bold text-white" id="retailPrice">-</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-4 text-sm">
@@ -110,9 +110,9 @@
                             <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                             </svg>
-                            库存充足
+                            <span id="stockStatus">库存</span>
                         </span>
-                        <span class="text-gray-400">当前库存: <span class="text-white font-semibold" id="stockCount">156</span> <span id="stockUnit">件</span></span>
+                        <span class="text-gray-400">当前库存: <span class="text-white font-semibold" id="stockCount">-</span> <span id="stockUnit">件</span></span>
                     </div>
                 </div>
 
@@ -258,13 +258,13 @@
             document.getElementById('stockCount').textContent = stock;
             document.getElementById('stockUnit').textContent = currentProduct.unit || '件';
             if (stock > 50) {
-                document.getElementById('stockBadge').innerHTML = '<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>库存充足';
+                document.getElementById('stockBadge').innerHTML = '<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span id="stockStatus">库存充足</span>';
                 document.getElementById('stockBadge').className = 'px-3 py-1 bg-green-500/20 text-green-400 rounded-lg';
             } else if (stock > 10) {
-                document.getElementById('stockBadge').innerHTML = '<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>库存紧张';
+                document.getElementById('stockBadge').innerHTML = '<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg><span id="stockStatus">库存紧张</span>';
                 document.getElementById('stockBadge').className = 'px-3 py-1 bg-orange-500/20 text-orange-400 rounded-lg';
             } else {
-                document.getElementById('stockBadge').innerHTML = '<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>库存不足';
+                document.getElementById('stockBadge').innerHTML = '<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg><span id="stockStatus">库存不足</span>';
                 document.getElementById('stockBadge').className = 'px-3 py-1 bg-red-500/20 text-red-400 rounded-lg';
             }
             
@@ -282,15 +282,15 @@
                 </div>
                 <div class="flex justify-between py-2 border-b border-white/5">
                     <span class="text-gray-500">出口申报单价</span>
-                    <span class="text-white">$${specs["出口申报"] || '-'}</span>
+                    <span class="text-white">$${specs["出口申报单价"] || '-'}</span>
                 </div>
                 <div class="flex justify-between py-2 border-b border-white/5">
                     <span class="text-gray-500">进口申报单价</span>
-                    <span class="text-white">$${specs["进口申报"] || '-'}</span>
+                    <span class="text-white">$${specs["进口申报单价"] || '-'}</span>
                 </div>
                 <div class="flex justify-between py-2 border-b border-white/5">
                     <span class="text-gray-500">含木制品重量</span>
-                    <span class="text-white">${specs["含木制品"] || '-'}</span>
+                    <span class="text-white">${specs["含木制品重量KG"] || '-'}</span>
                 </div>
                 ${currentProduct.link ? `<div class="flex justify-between py-2 border-b border-white/5">
                     <span class="text-gray-500">采购链接</span>
