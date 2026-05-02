@@ -198,6 +198,7 @@
         let currentProduct = null;
         let unitPrice = 0;
         let currencySymbol = '$';
+        let retailCurrencySymbol = '$';
 
         // 缩略图点击切换主图
         function selectThumb(el) {
@@ -227,6 +228,7 @@
             
             unitPrice = currentProduct.price;
             currencySymbol = currentProduct.currency;
+            retailCurrencySymbol = currentProduct.retailCurrency || '$';
             
             // 更新页面元素
             document.getElementById('productName').textContent = currentProduct.name;
@@ -249,7 +251,7 @@
             
             // 价格 - 采购价和建议零售价都显示当地货币
             document.getElementById('purchasePrice').textContent = currencySymbol + unitPrice.toFixed(2);
-            document.getElementById('retailPrice').textContent = currencySymbol + currentProduct.retailPrice.toFixed(2);
+            document.getElementById('retailPrice').textContent = retailCurrencySymbol + currentProduct.retailPrice.toFixed(2);
             
             // 库存
             const stock = currentProduct.stock || 0;
