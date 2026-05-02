@@ -237,23 +237,38 @@
         let unitPrice = 0;
         let currencySymbol = '$';
 
-        // 从API加载商品数据
+        // 从API或静态文件加载商品数据
         async function loadProducts() {
+            // 1. 优先从真实数据文件加载
+            try {
+                const resp = await fetch('products-data-real.js');
+                if (resp.ok) {
+                    const text = await resp.text();
+                    const match = text.match(/const\s+products\s*=\s*(\[[\s\S]*?\])\s*;/);
+                    if (match) {
+                        products = eval(match[0]);
+                        localStorage.setItem('overseastock_products', JSON.stringify(products));
+                        return;
+                    }
+                }
+            } catch (e) { console.log('无法加载真实数据'); }
+            
+            // 2. 尝试从后端API加载
             try {
                 const response = await fetch('/api/products');
                 if (response.ok) {
                     const apiProducts = await response.json();
                     if (apiProducts && apiProducts.length > 0) {
                         products = apiProducts;
+                        localStorage.setItem('overseastock_products', JSON.stringify(products));
                         return;
                     }
                 }
             } catch (e) {
-                console.log('无法从API加载商品数据，使用本地数据');
+                console.log('无法从API加载商品数据');
             }
-            // API失败或数据为空时使用本地数据
+            // 3. 使用本地数据
             products = localProducts;
-            // 同步到localStorage供其他页面使用
             localStorage.setItem('overseastock_products', JSON.stringify(products));
         }
 

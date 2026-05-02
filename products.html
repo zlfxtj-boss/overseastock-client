@@ -170,8 +170,8 @@
     </main>
 
     <script>
-        // 商品数据从后端API加载
-        let products = [];
+// 商品数据：优先从静态文件加载（真实商品数据）
+let products = [];
         const warehouseNames = { us: '🇺🇸 美国仓', uk: '🇬🇧 英国仓', de: '🇩🇪 德国仓' };
         let currentWarehouse = 'all';
 
@@ -328,8 +328,26 @@
             `).join('');
         });
 
-        // 页面加载时获取商品数据
+        // 页面加载时获取商品数据（优先从真实数据文件加载）
         async function loadProducts() {
+            // 1. 尝试从 products-data-real.js 加载真实商品数据
+            try {
+                const resp = await fetch('products-data-real.js');
+                if (resp.ok) {
+                    const text = await resp.text();
+                    // 提取 products 数组
+                    const match = text.match(/const\s+products\s*=\s*(\[[\s\S]*?\])\s*;/);
+                    if (match) {
+                        products.length = 0;
+                        products.push(...eval(match[0]));
+                        localStorage.setItem('overseastock_products', JSON.stringify(products));
+                        renderProducts();
+                        return;
+                    }
+                }
+            } catch (e) { console.log('无法加载真实数据'); }
+            
+            // 2. 尝试从后端API加载
             try {
                 const response = await fetch('/api/products');
                 if (response.ok) {
@@ -342,10 +360,9 @@
                         return;
                     }
                 }
-            } catch (e) {
-                console.log('无法连接到后端API');
-            }
-            // 尝试从localStorage加载
+            } catch (e) { console.log('无法连接到后端API'); }
+            
+            // 3. 从localStorage恢复
             const stored = localStorage.getItem('overseastock_products');
             if (stored) {
                 try {
