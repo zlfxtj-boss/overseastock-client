@@ -97,20 +97,23 @@
                             <span>全部仓库</span>
                             <span class="ml-auto text-gray-400 text-sm">(68)</span>
                         </button>
+                        <!-- 美国仓 -->
                         <button onclick="filterByWarehouse('us')" class="warehouse-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-gray-400 hover:bg-white/5 hover:text-white">
                             <span class="w-3 h-3 bg-blue-500 rounded-full"></span>
                             <span>🇺🇸 美国仓</span>
-                            <span class="ml-auto text-gray-500 text-sm">(28)</span>
+                            <span class="ml-auto text-gray-500 text-sm" id="usCount">(0)</span>
                         </button>
-                        <button onclick="filterByWarehouse('uk')" class="warehouse-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-gray-400 hover:bg-white/5 hover:text-white">
-                            <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                        <!-- 英国仓 - 暂不可用 -->
+                        <button disabled class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-600 cursor-not-allowed">
+                            <span class="w-3 h-3 bg-gray-500 rounded-full"></span>
                             <span>🇬🇧 英国仓</span>
-                            <span class="ml-auto text-gray-500 text-sm">(22)</span>
+                            <span class="ml-auto text-gray-600 text-sm">待开放</span>
                         </button>
-                        <button onclick="filterByWarehouse('de')" class="warehouse-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-gray-400 hover:bg-white/5 hover:text-white">
-                            <span class="w-3 h-3 bg-yellow-500 rounded-full"></span>
+                        <!-- 德国仓 - 暂不可用 -->
+                        <button disabled class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-600 cursor-not-allowed">
+                            <span class="w-3 h-3 bg-gray-500 rounded-full"></span>
                             <span>🇩🇪 德国仓</span>
-                            <span class="ml-auto text-gray-500 text-sm">(18)</span>
+                            <span class="ml-auto text-gray-600 text-sm">待开放</span>
                         </button>
                     </nav>
 
@@ -135,7 +138,7 @@
             <div class="flex-1">
                 <!-- Sort & Results -->
                 <div class="flex items-center justify-between mb-6">
-                    <p class="text-gray-400">共 <span class="text-white font-semibold">68</span> 个商品</p>
+                    <p class="text-gray-400">共 <span class="text-white font-semibold" id="totalCount">0</span> 个商品</p>
                     <select class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-primary/50">
                         <option>综合排序</option>
                         <option>价格从低到高</option>
@@ -178,6 +181,12 @@ let products = [];
         function renderProducts(warehouse = 'all') {
             const grid = document.getElementById('productsGrid');
             const filtered = warehouse === 'all' ? products : products.filter(p => p.warehouse === warehouse);
+            
+            // 更新美国仓数量
+            const usCount = products.filter(p => p.warehouse === 'us').length;
+            document.getElementById('usCount').textContent = `(${usCount})`;
+            // 更新总数量
+            document.getElementById('totalCount').textContent = products.length;
             
             grid.innerHTML = filtered.map(p => `
                 <div class="glass rounded-2xl overflow-hidden card-hover transition-all duration-300 cursor-pointer" onclick="location.href='product-detail.html?id=${p.id}'">
