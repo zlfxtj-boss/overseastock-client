@@ -334,16 +334,26 @@
                 const response = await fetch('/api/products');
                 if (response.ok) {
                     const data = await response.json();
-                    products.length = 0;
-                    products.push(...data);
-                    renderProducts();
-                } else {
-                    renderProducts();
+                    if (data && data.length > 0) {
+                        products.length = 0;
+                        products.push(...data);
+                        localStorage.setItem('overseastock_products', JSON.stringify(products));
+                        renderProducts();
+                        return;
+                    }
                 }
             } catch (e) {
-                console.log('无法连接到后端API，将显示空列表');
-                renderProducts();
+                console.log('无法连接到后端API');
             }
+            // 尝试从localStorage加载
+            const stored = localStorage.getItem('overseastock_products');
+            if (stored) {
+                try {
+                    products.length = 0;
+                    products.push(...JSON.parse(stored));
+                } catch(e) {}
+            }
+            renderProducts();
         }
         
         // Initial render
