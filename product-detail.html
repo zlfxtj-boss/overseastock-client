@@ -185,105 +185,31 @@
         <!-- Product Description -->
         <div class="mt-8 glass rounded-2xl p-6">
             <h3 class="text-white font-semibold mb-4">商品描述</h3>
-            <div class="text-gray-400 space-y-3 text-sm leading-relaxed" id="description">
-                <p>Lancôme Génifique 小黑瓶精华液，蕴含7大益生元及酵母精粹，唤醒肌肤年轻活力。</p>
-                <p>✅ 修护肌肤屏障，提升肌肤质感</p>
-                <p>✅ 紧致毛孔，细滑肤质</p>
-                <p>✅ 焕亮肤色，延缓衰老</p>
-                <p>✅ 适合所有肤质，包括敏感肌</p>
-            </div>
-        </div>
-    </main>
+        <div class="text-gray-400 space-y-3 text-sm leading-relaxed" id="description"></div>
+    </div>
+</section>
 
+<script src="products-data-real.js"></script>
     <script>
-        const warehouseNames = { us: '🇺🇸 美国仓' };
         const warehouseFlags = { us: '🇺🇸' };
 
-        // 本地商品数据（28个美国仓商品）
-        const localProducts = [
-            { id: "001", name: "摇椅", sku: "001", warehouse: "美国仓", price: 380, retail_price: 210, stock: 10, unit: "件", image: "🪑", currency: "$", currencyName: "USD", specs: {"尺寸": "138*14*85/54*6*34英寸", "重量": "13/27磅", "出口申报": 60, "进口申报": 60, "含木制品": "50KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/830008174408.html" },
-            { id: "002", name: "滚筒款2层-白架-黄木纹板", sku: "002", warehouse: "美国仓", price: 200, retail_price: 110, stock: 10, unit: "件", image: "📦", currency: "$", currencyName: "USD", specs: {"尺寸": "105*65.5*7.5/41*26*3英寸", "重量": "9.02磅", "出口申报": 36, "进口申报": 36, "含木制品": "14KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/798693869623.html" },
-            { id: "003", name: "滚筒款2层-黑架+古橡木板", sku: "003", warehouse: "美国仓", price: 200, retail_price: 110, stock: 10, unit: "件", image: "📦", currency: "$", currencyName: "USD", specs: {"尺寸": "105*65.5*7.5/41*26*3英寸", "重量": "9.02磅", "出口申报": 36, "进口申报": 36, "含木制品": "14KG"}, description: "美国仓商品", link: "" },
-            { id: "004", name: "滚筒款3层-白架-黄木纹板", sku: "004", warehouse: "美国仓", price: 210, retail_price: 113, stock: 10, unit: "件", image: "📦", currency: "$", currencyName: "USD", specs: {"尺寸": "105*65.5*9/41*26*3.5英寸", "重量": "11.12磅", "出口申报": 40, "进口申报": 40, "含木制品": "18KG"}, description: "美国仓商品", link: "" },
-            { id: "005", name: "大杉胡桃色40*35*70(升级实木腿)", sku: "005", warehouse: "美国仓", price: 200, retail_price: 102.5, stock: 10, unit: "件", image: "🗄️", currency: "$", currencyName: "USD", specs: {"尺寸": "49*43*13英寸", "重量": "7.3-7.95磅", "出口申报": 27, "进口申报": 27, "含木制品": "7.3KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/990934146072.html" },
-            { id: "006", name: "户外休闲多功能折叠床55.8黑+珍珠垫", sku: "006", warehouse: "美国仓", price: 140, retail_price: 105, stock: 10, unit: "件", image: "🛏️", currency: "$", currencyName: "USD", specs: {"尺寸": "68*58*11英寸", "重量": "4.45/7.23磅", "出口申报": 28, "进口申报": 28, "含木制品": "28KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/1018018277885.html" },
-            { id: "007", name: "洞洞板置物架黑色四层", sku: "007", warehouse: "美国仓", price: 320, retail_price: 395, stock: 10, unit: "件", image: "🔲", currency: "$", currencyName: "USD", specs: {"尺寸": "34*40*66英寸", "重量": "16.5磅", "出口申报": 102, "进口申报": 102, "含木制品": "6KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/670433059544.html" },
-            { id: "008", name: "洞洞板置物架白色四层", sku: "008", warehouse: "美国仓", price: 320, retail_price: 395, stock: 10, unit: "件", image: "🔲", currency: "$", currencyName: "USD", specs: {"尺寸": "34*40*66英寸", "重量": "16.5磅", "出口申报": 102, "进口申报": 102, "含木制品": "6KG"}, description: "美国仓商品", link: "" },
-            { id: "009", name: "洞洞板置物架白色五层", sku: "009", warehouse: "美国仓", price: 340, retail_price: 420, stock: 10, unit: "件", image: "🔲", currency: "$", currencyName: "USD", specs: {"尺寸": "44*40*76英寸", "重量": "18.5磅", "出口申报": 130, "进口申报": 130, "含木制品": "8KG"}, description: "美国仓商品", link: "" },
-            { id: "010", name: "洞洞板置物架黑色五层", sku: "010", warehouse: "美国仓", price: 340, retail_price: 420, stock: 10, unit: "件", image: "🔲", currency: "$", currencyName: "USD", specs: {"尺寸": "44*40*76英寸", "重量": "18.5磅", "出口申报": 130, "进口申报": 130, "含木制品": "8KG"}, description: "美国仓商品", link: "" },
-            { id: "011", name: "多功能储物沥水篮白色55", sku: "011", warehouse: "美国仓", price: 220, retail_price: 325, stock: 5, unit: "件", image: "🧺", currency: "$", currencyName: "USD", specs: {"尺寸": "78*22*36英寸", "重量": "6.2/10.3磅", "出口申报": 90, "进口申报": 90, "含木制品": "0KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/965612554183.html" },
-            { id: "012", name: "多功能储物沥水篮黑色55", sku: "012", warehouse: "美国仓", price: 220, retail_price: 325, stock: 5, unit: "件", image: "🧺", currency: "$", currencyName: "USD", specs: {"尺寸": "78*22*36英寸", "重量": "6.2/10.3磅", "出口申报": 90, "进口申报": 90, "含木制品": "0KG"}, description: "美国仓商品", link: "" },
-            { id: "013", name: "多功能储物沥水篮白色65", sku: "013", warehouse: "美国仓", price: 240, retail_price: 350, stock: 5, unit: "件", image: "🧺", currency: "$", currencyName: "USD", specs: {"尺寸": "78*22*36英寸", "重量": "6.2/10.3磅", "出口申报": 105, "进口申报": 105, "含木制品": "0KG"}, description: "美国仓商品", link: "" },
-            { id: "014", name: "多功能储物沥水篮黑色65", sku: "014", warehouse: "美国仓", price: 240, retail_price: 350, stock: 5, unit: "件", image: "🧺", currency: "$", currencyName: "USD", specs: {"尺寸": "78*22*36英寸", "重量": "6.2/10.3磅", "出口申报": 105, "进口申报": 105, "含木制品": "0KG"}, description: "美国仓商品", link: "" },
-            { id: "015", name: "马桶坐便改蹲便蹲", sku: "015", warehouse: "美国仓", price: 130, retail_price: 95, stock: 10, unit: "件", image: "🚽", currency: "$", currencyName: "USD", specs: {"尺寸": "44*50*11英寸", "重量": "4.25磅", "出口申报": 24, "进口申报": 24, "含木制品": "0KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/1032698251719.html" },
-            { id: "016", name: "折叠可移动小推车置物架", sku: "016", warehouse: "美国仓", price: 120, retail_price: 115, stock: 10, unit: "件", image: "🛒", currency: "$", currencyName: "USD", specs: {"尺寸": "73*50*12英寸", "重量": "3.65/7.3磅", "出口申报": 30, "进口申报": 30, "含木制品": "6KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/1008734793376.html" },
-            { id: "017", name: "厨房用品免安装折叠白色三层", sku: "017", warehouse: "美国仓", price: 140, retail_price: 130, stock: 10, unit: "件", image: "🏠", currency: "$", currencyName: "USD", specs: {"尺寸": "89*40*9英寸", "重量": "5/5.34磅", "出口申报": 34, "进口申报": 34, "含木制品": "0KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/617596918301.html" },
-            { id: "018", name: "厨房用品免安装折叠黑色三层", sku: "018", warehouse: "美国仓", price: 140, retail_price: 130, stock: 10, unit: "件", image: "🏠", currency: "$", currencyName: "USD", specs: {"尺寸": "89*40*9英寸", "重量": "5/5.34磅", "出口申报": 34, "进口申报": 34, "含木制品": "0KG"}, description: "美国仓商品", link: "" },
-            { id: "019", name: "厨房用品免安装折叠白色四层", sku: "019", warehouse: "美国仓", price: 160, retail_price: 150, stock: 10, unit: "件", image: "🏠", currency: "$", currencyName: "USD", specs: {"尺寸": "89*40*9英寸", "重量": "6/6.34磅", "出口申报": 45, "进口申报": 45, "含木制品": "0KG"}, description: "美国仓商品", link: "" },
-            { id: "020", name: "厨房用品免安装折叠黑色四层", sku: "020", warehouse: "美国仓", price: 160, retail_price: 150, stock: 10, unit: "件", image: "🏠", currency: "$", currencyName: "USD", specs: {"尺寸": "89*40*9英寸", "重量": "6/6.34磅", "出口申报": 45, "进口申报": 45, "含木制品": "0KG"}, description: "美国仓商品", link: "" },
-            { id: "021", name: "灰色圆管中宽-珍珠垫", sku: "021", warehouse: "美国仓", price: 190, retail_price: 210, stock: 10, unit: "件", image: "🛋️", currency: "$", currencyName: "USD", specs: {"尺寸": "114*25*19英寸", "重量": "7.05/9.02磅", "出口申报": 60, "进口申报": 60, "含木制品": "0KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/1032752859966.html" },
-            { id: "022", name: "黑架+雪山白岩板60+45组合", sku: "022", warehouse: "美国仓", price: 410, retail_price: 370, stock: 5, unit: "件", image: "🪑", currency: "$", currencyName: "USD", specs: {"尺寸": "64*64*48英寸", "重量": "18/33磅", "出口申报": 108, "进口申报": 108, "含木制品": "0KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/981427225298.html" },
-            { id: "023", name: "爆款直径60cm高度45cm", sku: "023", warehouse: "美国仓", price: 380, retail_price: 350, stock: 5, unit: "件", image: "🪑", currency: "$", currencyName: "USD", specs: {"尺寸": "64*64*48英寸", "重量": "10/33磅", "出口申报": 108, "进口申报": 108, "含木制品": "0KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/985557020051.html" },
-            { id: "024", name: "滚筒洗衣机置物架三层", sku: "024", warehouse: "美国仓", price: 180, retail_price: 110, stock: 5, unit: "件", image: "📺", currency: "$", currencyName: "USD", specs: {"尺寸": "100*43*10英寸", "重量": "8磅", "出口申报": 30, "进口申报": 30, "含木制品": "0KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/1007006677518.html" },
-            { id: "025", name: "滚筒洗衣机置物架二层", sku: "025", warehouse: "美国仓", price: 160, retail_price: 110, stock: 5, unit: "件", image: "📺", currency: "$", currencyName: "USD", specs: {"尺寸": "100*43*10英寸", "重量": "6.1磅", "出口申报": 30, "进口申报": 30, "含木制品": "0KG"}, description: "美国仓商品", link: "" },
-            { id: "026", name: "带挂钩洗衣机架两层黑色", sku: "026", warehouse: "美国仓", price: 36, retail_price: 105, stock: 16, unit: "件", image: "🔧", currency: "$", currencyName: "USD", specs: {"尺寸": "74.5*20*11英寸", "重量": "2.17磅", "出口申报": 30, "进口申报": 30, "含木制品": "0KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/887363901353.html" },
-            { id: "027", name: "带挂钩洗衣机架两层白色", sku: "027", warehouse: "美国仓", price: 36, retail_price: 105, stock: 16, unit: "件", image: "🔧", currency: "$", currencyName: "USD", specs: {"尺寸": "74.5*20*11英寸", "重量": "2.17磅", "出口申报": 30, "进口申报": 30, "含木制品": "0KG"}, description: "美国仓商品", link: "" },
-            { id: "028", name: "旋转凳", sku: "028", warehouse: "美国仓", price: 119, retail_price: 175, stock: 10, unit: "件", image: "🪑", currency: "$", currencyName: "USD", specs: {"尺寸": "40*40*55英寸", "重量": "4磅", "出口申报": 51, "进口申报": 51, "含木制品": "0KG"}, description: "美国仓商品，1688采购链接可用", link: "https://detail.1688.com/offer/974099206903.html" }
-        ];
-
-        // 商品数据从API加载，失败时使用本地数据
-        let products = [];
+        // 直接使用 products-data-real.js 注入的全局数据
+        let products = window.products || [];
         let currentProduct = null;
         let unitPrice = 0;
         let currencySymbol = '$';
 
-        // 从API或静态文件加载商品数据
-        async function loadProducts() {
-            // 1. 优先从真实数据文件加载
-            try {
-                const resp = await fetch('products-data-real.js');
-                if (resp.ok) {
-                    const text = await resp.text();
-                    const match = text.match(/const\s+products\s*=\s*(\[[\s\S]*?\])\s*;/);
-                    if (match) {
-                        products = eval(match[0]);
-                        localStorage.setItem('overseastock_products', JSON.stringify(products));
-                        return;
-                    }
-                }
-            } catch (e) { console.log('无法加载真实数据'); }
-            
-            // 2. 尝试从后端API加载
-            try {
-                const response = await fetch('/api/products');
-                if (response.ok) {
-                    const apiProducts = await response.json();
-                    if (apiProducts && apiProducts.length > 0) {
-                        products = apiProducts;
-                        localStorage.setItem('overseastock_products', JSON.stringify(products));
-                        return;
-                    }
-                }
-            } catch (e) {
-                console.log('无法从API加载商品数据');
-            }
-            // 3. 使用本地数据
-            products = localProducts;
-            localStorage.setItem('overseastock_products', JSON.stringify(products));
-        }
-
-        // 获取URL参数
+        // 获取URL参数（保持字符串类型，与数据一致）
         function getProductId() {
             const params = new URLSearchParams(window.location.search);
-            return parseInt(params.get('id')) || 0;
+            return params.get('id') || '';
         }
 
         // 初始化页面
-        async function initPage() {
-            await loadProducts();
+        function initPage() {
             const productId = getProductId();
-            currentProduct = products.find(p => p.id === productId);
-            
+            currentProduct = products.find(p => p.id == productId);
+
             if (!currentProduct) {
                 document.getElementById('productName').textContent = '商品不存在';
                 return;
@@ -296,14 +222,14 @@
             document.getElementById('productName').textContent = currentProduct.name;
             document.getElementById('productTitle').textContent = currentProduct.name;
             document.getElementById('productSubtitle').textContent = currentProduct.sku;
-            document.getElementById('warehouseBadge').textContent = warehouseNames[currentProduct.warehouse] || currentProduct.warehouse;
+            document.getElementById('warehouseBadge').textContent = currentProduct.warehouse;
             document.getElementById('skuLabel').textContent = 'SKU: ' + currentProduct.sku;
             document.getElementById('productImage').textContent = currentProduct.image || '📦';
             document.getElementById('thumb1').textContent = currentProduct.image || '📦';
             
             // 价格 - 采购价和建议零售价都显示当地货币
             document.getElementById('purchasePrice').textContent = currencySymbol + unitPrice.toFixed(2);
-            document.getElementById('retailPrice').textContent = currencySymbol + currentProduct.retail_price.toFixed(2);
+            document.getElementById('retailPrice').textContent = currencySymbol + currentProduct.retailPrice.toFixed(2);
             
             // 库存
             const stock = currentProduct.stock || 0;

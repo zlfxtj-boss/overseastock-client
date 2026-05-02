@@ -155,7 +155,7 @@
 
 <script src="products-data-real.js"></script>
     <script>
-        let products = [];
+        let products = window.products || [];
         
         function updateCartBadge() {
             const cart = JSON.parse(localStorage.getItem('overseasCart') || '[]');
@@ -166,7 +166,7 @@
         function renderFeaturedProducts() {
             const grid = document.getElementById('featuredProducts');
             
-            // 确保使用全局products变量
+            // 从 window.products 初始化（products-data-real.js 注入）
             if (typeof window.products !== 'undefined' && window.products.length > 0) {
                 products = window.products;
             }

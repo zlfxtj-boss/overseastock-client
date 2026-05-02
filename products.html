@@ -172,9 +172,10 @@
         </div>
     </main>
 
+    <script src="products-data-real.js"></script>
     <script>
 // 商品数据：优先从静态文件加载（真实商品数据）
-let products = [];
+let products = window.products || [];
         const warehouseNames = { us: '🇺🇸 美国仓', uk: '🇬🇧 英国仓', de: '🇩🇪 德国仓', '美国仓': '🇺🇸 美国仓', '英国仓': '🇬🇧 英国仓', '德国仓': '🇩🇪 德国仓' };
         // 兼容仓库字段格式：'us' 或 '美国仓'
         function normalizeWarehouse(w) { return w === 'us' || w === '美国仓' ? 'us' : w === 'uk' || w === '英国仓' ? 'uk' : w === 'de' || w === '德国仓' ? 'de' : w; }
@@ -346,56 +347,28 @@ let products = [];
             `).join('');
         });
 
-        // 页面加载时获取商品数据（优先从真实数据文件加载）
-        async function loadProducts() {
-            // 1. 尝试从 products-data-real.js 加载真实商品数据
-            try {
-                const resp = await fetch('products-data-real.js');
-                if (resp.ok) {
-                    const text = await resp.text();
-                    // 提取 products 数组
-                    const match = text.match(/const\s+products\s*=\s*(\[[\s\S]*?\])\s*;/);
-                    if (match) {
-                        products.length = 0;
-                        products.push(...eval(match[0]));
-                        normalizeProducts(); // 规范化仓库字段
-                        localStorage.setItem('overseastock_products', JSON.stringify(products));
-                        renderProducts();
-                        return;
-                    }
+        // 页面加载时初始化商品数据
+        function initProducts() {
+            // 从 window.products（products-data-real.js 注入）初始化
+            if (window.products && window.products.length > 0) {
+                products = window.products;
+                normalizeProducts();
+                localStorage.setItem('overseastock_products', JSON.stringify(products));
+            } else {
+                // 从 localStorage 恢复
+                const stored = localStorage.getItem('overseastock_products');
+                if (stored) {
+                    try {
+                        products = JSON.parse(stored);
+                        normalizeProducts();
+                    } catch(e) {}
                 }
-            } catch (e) { console.log('无法加载真实数据'); }
-            
-            // 2. 尝试从后端API加载
-            try {
-                const response = await fetch('/api/products');
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data && data.length > 0) {
-                        products.length = 0;
-                        products.push(...data);
-                        normalizeProducts(); // 规范化仓库字段
-                        localStorage.setItem('overseastock_products', JSON.stringify(products));
-                        renderProducts();
-                        return;
-                    }
-                }
-            } catch (e) { console.log('无法连接到后端API'); }
-            
-            // 3. 从localStorage恢复
-            const stored = localStorage.getItem('overseastock_products');
-            if (stored) {
-                try {
-                    products.length = 0;
-                    products.push(...JSON.parse(stored));
-                    normalizeProducts(); // 规范化仓库字段
-                } catch(e) {}
             }
             renderProducts();
         }
         
         // Initial render
-        loadProducts();
+        initProducts();
     </script>
 </body>
 </html>
