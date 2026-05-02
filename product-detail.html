@@ -6,6 +6,7 @@
     <title>商品详情 - 海外仓掌柜</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="products-data-real.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -185,11 +186,9 @@
         <!-- Product Description -->
         <div class="mt-8 glass rounded-2xl p-6">
             <h3 class="text-white font-semibold mb-4">商品描述</h3>
-        <div class="text-gray-400 space-y-3 text-sm leading-relaxed" id="description"></div>
-    </div>
-</section>
-
-<script src="products-data-real.js"></script>
+            <div class="text-gray-400 space-y-3 text-sm leading-relaxed" id="description"></div>
+        </div>
+    </main>
     <script>
         const warehouseFlags = { us: '🇺🇸' };
 
@@ -197,6 +196,7 @@
         let products = window.products || [];
         let currentProduct = null;
         let unitPrice = 0;
+        let quantity = 1;
         let currencySymbol = '$';
         let retailCurrencySymbol = '$';
 
@@ -218,7 +218,7 @@
 
         // 初始化页面
         function initPage() {
-            const productId = getProductId();
+            const productId = loadProduct();
             currentProduct = products.find(p => p.id == productId);
 
             if (!currentProduct) {
