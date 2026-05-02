@@ -89,7 +89,7 @@
                     </div>
                     <div>
                         <h3 class="font-semibold text-gray-800">英国仓</h3>
-                        <p class="text-gray-500 text-sm">即将开放</p>
+                        <p class="text-gray-500 text-sm">即将开放 | <span class="uk-count">-</span> 个商品</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-4 p-6 rounded-xl border border-gray-200 opacity-50">
@@ -153,6 +153,7 @@
         </div>
     </footer>
 
+<script src="products-data-real.js"></script>
     <script>
         let products = [];
         
@@ -164,6 +165,12 @@
         
         function renderFeaturedProducts() {
             const grid = document.getElementById('featuredProducts');
+            
+            // 确保使用全局products变量
+            if (typeof window.products !== 'undefined' && window.products.length > 0) {
+                products = window.products;
+            }
+            
             const featured = products.slice(0, 8);
             
             if (featured.length === 0) {
@@ -181,14 +188,14 @@
                         <div class="text-xs text-gray-400 mb-1">${p.sku}</div>
                         <h3 class="font-medium text-gray-800 mb-2 line-clamp-2">${p.name}</h3>
                         <div class="flex items-center gap-2 mb-3">
-                            <span class="text-xs px-2 py-0.5 bg-red-100 text-red-600 rounded">US</span>
+                            <span class="text-xs px-2 py-0.5 bg-red-100 text-red-600 rounded">${p.warehouse}</span>
                             <span class="text-xs ${p.stock > 0 ? 'text-green-600' : 'text-gray-400'}">
                                 ${p.stock > 0 ? '有货' : '缺货'}
                             </span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-lg font-bold text-primary">$${p.price}</span>
-                            <span class="text-sm text-gray-400">建议${p.retailPrice}</span>
+                            <span class="text-lg font-bold text-primary">$${p.price || 0}</span>
+                            <span class="text-sm text-gray-400">建议¥${p.retailPrice || 0}</span>
                         </div>
                     </div>
                 </div>
@@ -199,34 +206,17 @@
             document.getElementById('usProductCount').textContent = products.length;
         }
         
-        async function loadProducts() {
-            try {
-                const resp = await fetch('products-data-real.js');
-                if (resp.ok) {
-                    const text = await resp.text();
-                    const match = text.match(/const\s+products\s*=\s*(\[[\s\S]*?\])\s*;/);
-                    if (match) {
-                        products = eval(match[0]);
-                        localStorage.setItem('overseastock_products', JSON.stringify(products));
-                        renderFeaturedProducts();
-                        return;
-                    }
-                }
-            } catch (e) { console.log('加载失败'); }
-            
-            const stored = localStorage.getItem('overseastock_products');
-            if (stored) {
-                try {
-                    products = JSON.parse(stored);
-                    renderFeaturedProducts();
-                } catch(e) {}
+        function init() {
+            updateCartBadge();
+            // 等待DOM加载完成后渲染
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', renderFeaturedProducts);
+            } else {
+                renderFeaturedProducts();
             }
         }
         
-        window.addEventListener('DOMContentLoaded', function() {
-            updateCartBadge();
-            loadProducts();
-        });
+        init();
     </script>
 </body>
 </html>

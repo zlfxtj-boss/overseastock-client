@@ -175,15 +175,17 @@
     <script>
 // 商品数据：优先从静态文件加载（真实商品数据）
 let products = [];
-        const warehouseNames = { us: '🇺🇸 美国仓', uk: '🇬🇧 英国仓', de: '🇩🇪 德国仓' };
+        const warehouseNames = { us: '🇺🇸 美国仓', uk: '🇬🇧 英国仓', de: '🇩🇪 德国仓', '美国仓': '🇺🇸 美国仓', '英国仓': '🇬🇧 英国仓', '德国仓': '🇩🇪 德国仓' };
+        // 兼容仓库字段格式：'us' 或 '美国仓'
+        function normalizeWarehouse(w) { return w === 'us' || w === '美国仓' ? 'us' : w === 'uk' || w === '英国仓' ? 'uk' : w === 'de' || w === '德国仓' ? 'de' : w; }
         let currentWarehouse = 'all';
 
         function renderProducts(warehouse = 'all') {
             const grid = document.getElementById('productsGrid');
-            const filtered = warehouse === 'all' ? products : products.filter(p => p.warehouse === warehouse);
+            const filtered = warehouse === 'all' ? products : products.filter(p => normalizeWarehouse(p.warehouse) === warehouse);
             
             // 更新美国仓数量
-            const usCount = products.filter(p => p.warehouse === 'us').length;
+            const usCount = products.filter(p => normalizeWarehouse(p.warehouse) === 'us').length;
             document.getElementById('usCount').textContent = `(${usCount})`;
             // 更新总数量
             document.getElementById('totalCount').textContent = products.length;
@@ -236,6 +238,13 @@ let products = [];
             event.target.closest('.warehouse-btn').classList.add('active', 'bg-primary/20', 'text-white');
             event.target.closest('.warehouse-btn').classList.remove('text-gray-400');
             renderProducts(warehouse);
+        }
+        
+        // 规范化商品数据的仓库字段，加载后统一格式
+        function normalizeProducts() {
+            products.forEach(p => {
+                p.warehouse = normalizeWarehouse(p.warehouse);
+            });
         }
 
         function getCart() {
@@ -349,6 +358,7 @@ let products = [];
                     if (match) {
                         products.length = 0;
                         products.push(...eval(match[0]));
+                        normalizeProducts(); // 规范化仓库字段
                         localStorage.setItem('overseastock_products', JSON.stringify(products));
                         renderProducts();
                         return;
@@ -364,6 +374,7 @@ let products = [];
                     if (data && data.length > 0) {
                         products.length = 0;
                         products.push(...data);
+                        normalizeProducts(); // 规范化仓库字段
                         localStorage.setItem('overseastock_products', JSON.stringify(products));
                         renderProducts();
                         return;
@@ -377,6 +388,7 @@ let products = [];
                 try {
                     products.length = 0;
                     products.push(...JSON.parse(stored));
+                    normalizeProducts(); // 规范化仓库字段
                 } catch(e) {}
             }
             renderProducts();
