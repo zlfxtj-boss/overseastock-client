@@ -193,8 +193,8 @@ let products = window.products || [];
             
             grid.innerHTML = filtered.map(p => `
                 <div class="glass rounded-2xl overflow-hidden card-hover transition-all duration-300 cursor-pointer" onclick="location.href='product-detail.html?id=${p.id}'">
-                    <div class="aspect-square bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-7xl">
-                        ${p.image}
+                    <div class="aspect-square bg-gradient-to-br from-white/5 to-white/10 overflow-hidden">
+                        ${p.image ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center text-6xl\\'>📦<\/div>'">` : `<div class="w-full h-full flex items-center justify-center text-6xl">📦</div>`}
                     </div>
                     <div class="p-5">
                         <div class="flex items-start justify-between mb-2">
@@ -310,8 +310,8 @@ let products = window.products || [];
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = filtered.map(p => `
                 <div class="glass rounded-2xl overflow-hidden card-hover transition-all duration-300 cursor-pointer" onclick="location.href='product-detail.html?id=${p.id}'">
-                    <div class="aspect-square bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center text-7xl">
-                        ${p.image}
+                    <div class="aspect-square bg-gradient-to-br from-white/5 to-white/10 overflow-hidden">
+                        ${p.image ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center text-6xl\\'>📦<\/div>'">` : `<div class="w-full h-full flex items-center justify-center text-6xl">📦</div>`}
                     </div>
                     <div class="p-5">
                         <div class="flex items-start justify-between mb-2">

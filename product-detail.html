@@ -69,15 +69,15 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Product Image -->
             <div class="glass rounded-3xl p-8">
-                <div class="aspect-square bg-gradient-to-br from-white/5 to-white/10 rounded-2xl flex items-center justify-center text-9xl" id="productImage">
-                    💧
+                <div class="aspect-square bg-gradient-to-br from-white/5 to-white/10 rounded-2xl overflow-hidden flex items-center justify-center" id="productImageContainer">
+                    <img id="productImage" src="" alt="商品图片" class="w-full h-full object-contain">
                 </div>
                 <!-- Thumbnails -->
-                <div class="flex gap-3 mt-4">
-                    <div class="w-20 h-20 bg-primary/20 rounded-xl flex items-center justify-center text-3xl cursor-pointer border-2 border-primary" id="thumb1">💧</div>
-                    <div class="w-20 h-20 bg-white/5 rounded-xl flex items-center justify-center text-3xl cursor-pointer hover:bg-white/10 transition-colors" id="thumb2">🌸</div>
-                    <div class="w-20 h-20 bg-white/5 rounded-xl flex items-center justify-center text-3xl cursor-pointer hover:bg-white/10 transition-colors" id="thumb3">✨</div>
-                    <div class="w-20 h-20 bg-white/5 rounded-xl flex items-center justify-center text-3xl cursor-pointer hover:bg-white/10 transition-colors" id="thumb4">📦</div>
+                <div class="flex gap-3 mt-4" id="thumbnailsRow">
+                    <div class="w-20 h-20 bg-primary/20 rounded-xl overflow-hidden flex items-center justify-center cursor-pointer border-2 border-primary" id="thumb1" onclick="selectThumb(this)"><img id="thumb1Img" src="" class="w-full h-full object-cover"></div>
+                    <div class="w-20 h-20 bg-white/5 rounded-xl overflow-hidden flex items-center justify-center cursor-pointer hover:bg-white/10 transition-colors" id="thumb2" onclick="selectThumb(this)"><img id="thumb2Img" src="" class="w-full h-full object-cover"></div>
+                    <div class="w-20 h-20 bg-white/5 rounded-xl overflow-hidden flex items-center justify-center cursor-pointer hover:bg-white/10 transition-colors" id="thumb3" onclick="selectThumb(this)"><img id="thumb3Img" src="" class="w-full h-full object-cover"></div>
+                    <div class="w-20 h-20 bg-white/5 rounded-xl overflow-hidden flex items-center justify-center cursor-pointer hover:bg-white/10 transition-colors" id="thumb4" onclick="selectThumb(this)"><img id="thumb4Img" src="" class="w-full h-full object-cover"></div>
                 </div>
             </div>
 
@@ -199,8 +199,18 @@
         let unitPrice = 0;
         let currencySymbol = '$';
 
-        // 获取URL参数（保持字符串类型，与数据一致）
-        function getProductId() {
+        // 缩略图点击切换主图
+        function selectThumb(el) {
+            const img = el.querySelector('img');
+            if (img && img.src) {
+                document.getElementById('productImage').src = img.src;
+                document.getElementById('productImage').style.display = 'block';
+                document.getElementById('productImageContainer').innerHTML = '<img id="productImage" src="' + img.src + '" alt="商品图片" class="w-full h-full object-contain">';
+            }
+        }
+
+        function loadProduct() {
+            // 获取URL参数（保持字符串类型，与数据一致）
             const params = new URLSearchParams(window.location.search);
             return params.get('id') || '';
         }
@@ -224,8 +234,18 @@
             document.getElementById('productSubtitle').textContent = currentProduct.sku;
             document.getElementById('warehouseBadge').textContent = currentProduct.warehouse;
             document.getElementById('skuLabel').textContent = 'SKU: ' + currentProduct.sku;
-            document.getElementById('productImage').textContent = currentProduct.image || '📦';
-            document.getElementById('thumb1').textContent = currentProduct.image || '📦';
+            const img = currentProduct.image;
+            const imgSrc = img && img.startsWith('http') ? img : '';
+            document.getElementById('productImage').src = imgSrc;
+            document.getElementById('productImage').onerror = function() {
+                this.style.display='none';
+                document.getElementById('productImageContainer').innerHTML='<div class="text-9xl">📦</div>';
+            };
+            // 4个缩略图都用同一张图（实际只有1张图）
+            ['thumb1','thumb2','thumb3','thumb4'].forEach((id,i) => {
+                const el = document.getElementById(id + 'Img');
+                if (el) el.src = imgSrc;
+            });
             
             // 价格 - 采购价和建议零售价都显示当地货币
             document.getElementById('purchasePrice').textContent = currencySymbol + unitPrice.toFixed(2);

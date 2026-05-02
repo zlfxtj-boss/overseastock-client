@@ -181,8 +181,8 @@
             grid.innerHTML = featured.map(p => `
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover transition-all duration-300 cursor-pointer" 
                      onclick="location.href='product-detail.html?id=${p.id}'">
-                    <div class="aspect-square bg-gray-100 flex items-center justify-center text-6xl">
-                        📦
+                    <div class="aspect-square bg-gray-100 overflow-hidden flex items-center justify-center">
+                        ${p.image ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\\'text-6xl\\'>📦<\\/div>'">` : `<div class="text-6xl">📦</div>`}
                     </div>
                     <div class="p-4">
                         <div class="text-xs text-gray-400 mb-1">${p.sku}</div>
