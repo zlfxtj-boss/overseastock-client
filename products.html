@@ -173,7 +173,7 @@
     </main>
 
     <script>
-        const API_BASE = 'https://overseastock-production.up.railway.app';
+        const API_BASE = 'https://overseastock-api-production.up.railway.app';
         let products = [];
         const warehouseNames = { us: '🇺🇸 美国仓', uk: '🇬🇧 英国仓', de: '🇩🇪 德国仓', '美国仓': '🇺🇸 美国仓', '英国仓': '🇬🇧 英国仓', '德国仓': '🇩🇪 德国仓' };
         function normalizeWarehouse(w) { return w === 'us' || w === '美国仓' ? 'us' : w === 'uk' || w === '英国仓' ? 'uk' : w === 'de' || w === '德国仓' ? 'de' : w; }
