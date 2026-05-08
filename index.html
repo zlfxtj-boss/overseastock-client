@@ -153,9 +153,40 @@
         </div>
     </footer>
 
-<script src="products-data-real.js"></script>
     <script>
-        let products = window.products || [];
+        const API_BASE = 'https://overseastock-production.up.railway.app';
+        let products = [];
+        
+        // 从API获取真实商品数据
+        async function fetchProducts() {
+            try {
+                const response = await fetch(`${API_BASE}/api/products`);
+                if (!response.ok) throw new Error('获取商品失败');
+                const data = await response.json();
+                // 转换API数据格式以匹配前端
+                products = data.map(item => ({
+                    id: String(item.id),
+                    name: item.name,
+                    sku: item.sku || item.name.substring(0, 10),
+                    warehouse: item.warehouse || 'us',
+                    price: parseFloat(item.price) || 0,
+                    retailPrice: parseFloat(item.retail_price) || 0,
+                    stock: item.stock || 0,
+                    unit: item.unit || '件',
+                    image: item.image || '',
+                    currency: item.currency || '¥',
+                    currencyName: item.currency_name || 'CNY',
+                    retailCurrency: '$',
+                    retailCurrencyName: 'USD',
+                    specs: item.specs || {},
+                    description: item.description || ''
+                }));
+                return products;
+            } catch (error) {
+                console.error('获取商品失败:', error);
+                return [];
+            }
+        }
         
         function updateCartBadge() {
             const cart = JSON.parse(localStorage.getItem('overseasCart') || '[]');
@@ -166,15 +197,10 @@
         function renderFeaturedProducts() {
             const grid = document.getElementById('featuredProducts');
             
-            // 从 window.products 初始化（products-data-real.js 注入）
-            if (typeof window.products !== 'undefined' && window.products.length > 0) {
-                products = window.products;
-            }
-            
             const featured = products.slice(0, 8);
             
             if (featured.length === 0) {
-                grid.innerHTML = '<div class="text-center text-gray-400 py-12 col-span-4">暂无商品数据，请前往商品列表页面</div>';
+                grid.innerHTML = '<div class="text-center text-gray-400 py-12 col-span-4">暂无商品数据，请稍后再试</div>';
                 return;
             }
             
@@ -182,13 +208,13 @@
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover transition-all duration-300 cursor-pointer" 
                      onclick="location.href='product-detail.html?id=${p.id}'">
                     <div class="aspect-square bg-gray-100 overflow-hidden flex items-center justify-center">
-                        ${p.image ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\\'text-6xl\\'>📦<\\/div>'">` : `<div class="text-6xl">📦</div>`}
+                        ${p.image ? `<img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\'text-6xl\'>📦<\/div>'">` : `<div class="text-6xl">📦</div>`}
                     </div>
                     <div class="p-4">
                         <div class="text-xs text-gray-400 mb-1">${p.sku}</div>
                         <h3 class="font-medium text-gray-800 mb-2 line-clamp-2">${p.name}</h3>
                         <div class="flex items-center gap-2 mb-3">
-                            <span class="text-xs px-2 py-0.5 bg-red-100 text-red-600 rounded">${p.warehouse}</span>
+                            <span class="text-xs px-2 py-0.5 bg-red-100 text-red-600 rounded">${p.warehouse === 'us' ? '美国仓' : p.warehouse}</span>
                             <span class="text-xs ${p.stock > 0 ? 'text-green-600' : 'text-gray-400'}">
                                 ${p.stock > 0 ? '有货' : '缺货'}
                             </span>
@@ -206,14 +232,10 @@
             document.getElementById('usProductCount').textContent = products.length;
         }
         
-        function init() {
+        async function init() {
             updateCartBadge();
-            // 等待DOM加载完成后渲染
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', renderFeaturedProducts);
-            } else {
-                renderFeaturedProducts();
-            }
+            await fetchProducts();
+            renderFeaturedProducts();
         }
         
         init();
