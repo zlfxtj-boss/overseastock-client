@@ -211,13 +211,20 @@
 
         function renderProducts(warehouse = 'all') {
             const grid = document.getElementById('productsGrid');
-            const filtered = warehouse === 'all' ? products : products.filter(p => normalizeWarehouse(p.warehouse) === warehouse);
+            // 规范化所有商品的仓库字段再过滤
+            const normalizedProducts = products.map(p => ({
+                ...p,
+                warehouse: normalizeWarehouse(p.warehouse)
+            }));
+            const filtered = warehouse === 'all' 
+                ? normalizedProducts 
+                : normalizedProducts.filter(p => p.warehouse === warehouse);
             
             // 更新美国仓数量
-            const usCount = products.filter(p => normalizeWarehouse(p.warehouse) === 'us').length;
+            const usCount = normalizedProducts.filter(p => p.warehouse === 'us').length;
             document.getElementById('usCount').textContent = `(${usCount})`;
             // 更新总数量
-            document.getElementById('totalCount').textContent = products.length;
+            document.getElementById('totalCount').textContent = normalizedProducts.length;
             
             grid.innerHTML = filtered.map(p => `
                 <div class="glass rounded-2xl overflow-hidden card-hover transition-all duration-300 cursor-pointer" onclick="location.href='product-detail.html?id=${p.id}'">
@@ -325,10 +332,14 @@
             document.getElementById('cartBadge').textContent = total;
         }
 
-        // Search
+        // Search - 使用规范化后的商品数据
         document.getElementById('searchInput').addEventListener('input', function(e) {
             const query = e.target.value.toLowerCase();
-            let filtered = products.filter(p => 
+            const normalizedProducts = products.map(p => ({
+                ...p,
+                warehouse: normalizeWarehouse(p.warehouse)
+            }));
+            let filtered = normalizedProducts.filter(p => 
                 p.name.toLowerCase().includes(query) || 
                 p.sku.toLowerCase().includes(query)
             );

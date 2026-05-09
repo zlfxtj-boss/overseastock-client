@@ -33,6 +33,36 @@
             50% { transform: translateY(-10px); }
         }
         .gradient-text { background: linear-gradient(135deg, #6366f1, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            z-index: 100;
+            animation: slideUp 0.3s ease;
+        }
+        .toast-success { background: rgba(16, 185, 129, 0.9); }
+        .toast-error { background: rgba(239, 68, 68, 0.9); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        
+        .spinner {
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -41,6 +71,9 @@
         <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl floating"></div>
         <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl floating" style="animation-delay: -1.5s;"></div>
     </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"></div>
 
     <div class="relative z-10 w-full max-w-md">
         <!-- Logo -->
@@ -69,7 +102,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
                         </span>
-                        <input type="text" name="username" placeholder="请输入管理员账号" required value="admin"
+                        <input type="text" name="username" id="username" placeholder="请输入管理员账号" required
                             class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none input-glow transition-all">
                     </div>
                 </div>
@@ -94,19 +127,14 @@
                     </div>
                 </div>
 
-                <!-- Remember -->
-                <div class="flex items-center text-sm">
-                    <label class="flex items-center text-gray-400 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 rounded border-gray-600 bg-white/5 text-primary focus:ring-primary mr-2">
-                        <span>记住登录状态</span>
-                    </label>
-                </div>
+                <!-- Error Message -->
+                <div id="errorMsg" class="text-red-400 text-sm text-center hidden"></div>
 
                 <!-- Submit -->
                 <button type="submit" id="loginBtn"
                     class="w-full bg-gradient-to-r from-primary to-secondary text-white font-semibold py-3.5 rounded-xl hover:opacity-90 transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2">
-                    <span>登录管理后台</span>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span id="loginText">登录管理后台</span>
+                    <svg id="loginArrow" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                     </svg>
                 </button>
@@ -130,6 +158,8 @@
     </div>
 
     <script>
+        const API_BASE = 'https://overseastock-api-production.up.railway.app';
+
         // Toggle password visibility
         function togglePassword() {
             const pwd = document.getElementById('password');
@@ -143,48 +173,97 @@
             }
         }
 
-        // Auto-fill remembered credentials
-        window.addEventListener('DOMContentLoaded', function() {
-            const rememberedUser = localStorage.getItem('adminRememberedUser');
-            const rememberedPwd = localStorage.getItem('adminRememberedPwd');
-            const rememberChecked = localStorage.getItem('adminRememberChecked');
-            
-            if (rememberedUser) document.querySelector('input[name="username"]').value = rememberedUser;
-            if (rememberedPwd) document.getElementById('password').value = rememberedPwd;
-            if (rememberChecked === 'true') document.querySelector('input[type="checkbox"]').checked = true;
-        });
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <div class="flex items-center gap-3">
+                    ${type === 'success' 
+                        ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
+                        : '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
+                    }
+                    <span>${message}</span>
+                </div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
 
-        // Login form
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
             const btn = document.getElementById('loginBtn');
-            const username = document.querySelector('input[name="username"]').value;
-            const password = document.querySelector('input[name="password"]').value;
-            const remember = document.querySelector('input[type="checkbox"]').checked;
+            const loginText = document.getElementById('loginText');
+            const errorMsg = document.getElementById('errorMsg');
             
-            btn.innerHTML = '<svg class="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>登录中...</span>';
-            btn.disabled = true;
+            // Clear previous error
+            errorMsg.classList.add('hidden');
             
-            // Save credentials if remember is checked
-            if (remember) {
-                localStorage.setItem('adminRememberedUser', username);
-                localStorage.setItem('adminRememberedPwd', password);
-                localStorage.setItem('adminRememberChecked', 'true');
-            } else {
-                localStorage.removeItem('adminRememberedUser');
-                localStorage.removeItem('adminRememberedPwd');
-                localStorage.setItem('adminRememberChecked', 'false');
+            // Validate input
+            if (!username || !password) {
+                errorMsg.textContent = '请输入用户名和密码';
+                errorMsg.classList.remove('hidden');
+                return;
             }
             
-            setTimeout(() => {
-                if (username === 'shayu0909' && password === 'shayu0909') {
-                    window.location.href = 'dashboard.html';
-                } else {
-                    alert('账号或密码错误！');
-                    btn.innerHTML = '<span>登录管理后台</span><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>';
-                    btn.disabled = false;
+            // Show loading state
+            btn.disabled = true;
+            loginText.innerHTML = '<div class="spinner"></div><span>登录中...</span>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || '登录失败');
                 }
-            }, 1500);
+                
+                // 登录成功 - 保存JWT Token到localStorage（不再存储明文密码）
+                localStorage.setItem('adminToken', data.token);
+                localStorage.setItem('adminUser', JSON.stringify(data.user));
+                localStorage.setItem('adminLoginTime', Date.now().toString());
+                
+                showToast('登录成功！正在跳转...', 'success');
+                
+                // 延迟跳转，让用户看到成功提示
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('登录错误:', error);
+                errorMsg.textContent = error.message || '账号或密码错误！';
+                errorMsg.classList.remove('hidden');
+                
+                // Reset button
+                btn.disabled = false;
+                loginText.innerHTML = '<span>登录管理后台</span><svg id="loginArrow" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>';
+            }
+        });
+
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('adminToken');
+            const loginTime = localStorage.getItem('adminLoginTime');
+            
+            // 如果有token且在24小时内，可以直接跳转（可选功能）
+            if (token && loginTime) {
+                const elapsed = Date.now() - parseInt(loginTime);
+                const dayMs = 24 * 60 * 60 * 1000;
+                // 超过24小时的token仍需重新登录
+            }
         });
     </script>
 </body>
